@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Pay-Tech Home Page</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Swiper CSS for Carousel -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom Swiper Pagination styling to look premium */
+        .swiper-pagination-bullet {
+            background: #cbd5e1 !important;
+            opacity: 1 !important;
+            width: 6px !important;
+            height: 6px !important;
+            transition: all 0.3s ease;
+        }
+        .swiper-pagination-bullet-active {
+            background: #162a5b !important;
+            width: 18px !important;
+            border-radius: 4px !important;
+        }
+        .swiper-pagination {
+            position: absolute !important;
+            bottom: 6px !important;
+        }
+        /* Soft Scale animation on click */
+        .active-scale:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-slate-300">
+
+    <!-- Mobile Device Simulator Core Frame -->
+    <div class="w-full max-w-md bg-[#f8f9fc] min-h-screen shadow-2xl relative flex flex-col pb-36 overflow-y-auto overflow-x-hidden rounded-none md:rounded-[40px] md:min-h-[850px] md:max-h-[900px] border border-gray-100">
+        
+        <!-- STICKY TOP APP BAR -->
+        <header class="p-4 flex justify-between items-center bg-white sticky top-0 z-40 shadow-sm border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <!-- User Profile Badge -->
+            <a href="profile.html"
+                class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-400 to-slate-200 flex items-center justify-center text-gray-800 font-extrabold text-lg border border-white shadow-sm active-scale cursor-pointer">
+                RB
+            </a>
+                <div>
+                    <h2 id="homeNameDisplay" class="font-black text-gray-800 text-lg leading-tight tracking-tight">User Name</h2>
+                    <p class="text-xs text-gray-400 font-medium flex items-center gap-1 mt-0.5">
+                        9999999999@upi <i class="fa-solid fa-qrcode text-blue-600 cursor-pointer hover:text-blue-800"></i>
+                    </p>
+                </div>
+            </div>
+            <!-- Notifications & Rewards -->
+            <div class="flex items-center gap-4">
+                <button class="flex items-center gap-1 text-sm font-bold text-[#162a5b] bg-slate-50 px-2.5 py-1.5 rounded-full active-scale">
+                    Rewards <i class="fa-solid fa-trophy text-amber-500 text-base"></i>
+                </button>
+                <div class="relative active-scale cursor-pointer p-1">
+                    <i class="fa-solid fa-bell text-xl text-[#162a5b]"></i>
+                    <span class="absolute top-0 right-0 bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full ring-2 ring-white">8</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- APP SCROLLABLE DYNAMIC BODY -->
+        <main class="flex-1">
+            
+            <!-- 4-BANNER LOOP CAROUSEL (SWIPER) -->
+            <div class="px-4 mt-4 relative">
+                <div class="swiper mainPromoSwiper rounded-3xl overflow-hidden pb-7">
+                    <div class="swiper-wrapper">
+                        
+                        <!-- Banner 1: RuPay Credit Card -->
+                        <div class="swiper-slide bg-gradient-to-r from-[#e0f2fe] to-[#e0e7ff] p-5 rounded-3xl border border-blue-100 flex justify-between items-center h-36">
+                            <div class="max-w-[65%]">
+                                <h3 class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Special Feature</h3>
+                                <h2 class="text-base font-black text-[#162a5b] leading-tight my-1">RuPay Credit card <span class="font-normal text-xs block text-gray-500">only on BHIM UPI</span></h2>
+                                <button class="mt-2.5 bg-[#162a5b] text-white text-[10px] font-bold px-4 py-2 rounded-full shadow-md active-scale">Learn more</button>
+                            </div>
+                            <div class="w-24 h-24 flex items-center justify-center">
+                                <i class="fa-solid fa-credit-card text-5xl text-blue-600 opacity-90 transform rotate-12"></i>
+                            </div>
+                        </div>
+
+                        <!-- Banner 2: Flat Bill Cashback -->
+                        <div class="swiper-slide bg-gradient-to-r from-[#fef3c7] to-[#fde68a] p-5 rounded-3xl border border-amber-200 flex justify-between items-center h-36">
+                            <div class="max-w-[65%]">
+                                <h3 class="text-amber-800 text-xs font-semibold uppercase tracking-wider">Super Cashback</h3>
+                                <h2 class="text-base font-black text-amber-950 leading-tight my-1">Get up to ₹150 Back <span class="font-normal text-xs block text-amber-800">on Electricity & Gas bills</span></h2>
+                                <button class="mt-2.5 bg-amber-900 text-white text-[10px] font-bold px-4 py-2 rounded-full shadow-md active-scale">Pay Bills</button>
+                            </div>
+                            <div class="w-24 h-24 flex items-center justify-center">
+                                <i class="fa-solid fa-gift text-5xl text-amber-600 opacity-90"></i>
+                            </div>
+                        </div>
+
+                        <!-- Banner 3: Travel Booking Zero Fees -->
+                        <div class="swiper-slide bg-gradient-to-r from-[#dcfce7] to-[#bbf7d0] p-5 rounded-3xl border border-emerald-200 flex justify-between items-center h-36">
+                            <div class="max-w-[65%]">
+                                <h3 class="text-emerald-800 text-xs font-semibold uppercase tracking-wider">Travel Fest</h3>
+                                <h2 class="text-base font-black text-emerald-950 leading-tight my-1">Zero Convenience Fee <span class="font-normal text-xs block text-emerald-700">on Flights & Trains</span></h2>
+                                <button class="mt-2.5 bg-emerald-800 text-white text-[10px] font-bold px-4 py-2 rounded-full shadow-md active-scale">Book Now</button>
+                            </div>
+                            <div class="w-24 h-24 flex items-center justify-center">
+                                <i class="fa-solid fa-plane text-5xl text-emerald-600 opacity-90 -rotate-12"></i>
+                            </div>
+                        </div>
+
+                        <!-- Banner 4: Secure Biometric Pay -->
+                        <div class="swiper-slide bg-gradient-to-r from-[#f5f3ff] to-[#edd1ff] p-5 rounded-3xl border border-purple-200 flex justify-between items-center h-36">
+                            <div class="max-w-[65%]">
+                                <h3 class="text-purple-800 text-xs font-semibold uppercase tracking-wider">Safety First</h3>
+                                <h2 class="text-base font-black text-purple-950 leading-tight my-1">Enable App Lock <span class="font-normal text-xs block text-purple-700">for advanced device safety</span></h2>
+                                <button class="mt-2.5 bg-purple-800 text-white text-[10px] font-bold px-4 py-2 rounded-full shadow-md active-scale">Secure App</button>
+                            </div>
+                            <div class="w-24 h-24 flex items-center justify-center">
+                                <i class="fa-solid fa-shield-halved text-5xl text-purple-600 opacity-90"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Premium Carousel Dots Indicator -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+
+            <!-- PAY NOW MAIN ACTION GRID (LARGE LOGO ICONS) -->
+            <div class="px-4 mt-2">
+                <h4 class="text-xs font-black text-gray-400 tracking-widest mb-3 uppercase">PAY NOW</h4>
+                <div class="bg-white rounded-[32px] p-5 shadow-sm grid grid-cols-4 gap-y-6 gap-x-2 text-center border border-slate-100">
+                    
+                    <!-- Icon 1 -->
+                   <!-- Icon 1 (Updated inside your main code) -->
+<a href="send.html" class="flex flex-col items-center cursor-pointer active-scale group">
+    <div class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
+        <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
+    </div>
+    <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Send to Mobile/ UPI</span>
+</a>
+
+                    <!-- Icon 2 -->
+                    <div class="flex flex-col items-center cursor-pointer relative active-scale group">
+                        <span class="absolute -top-2 bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wide z-10">New</span>
+                        <div class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
+                            <i class="fa-solid fa-building-columns text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Send To Bank</span>
+                    </div>
+
+                    <!-- Icon 3 -->
+                    <div class="flex flex-col items-center cursor-pointer active-scale group">
+                        <div class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
+                            <i class="fa-solid fa-file-invoice-dollar text-2xl"></i>
+                        </div>
+                        <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Approve To Pay</span>
+                    </div>
+
+                    <!-- Icon 4 -->
+                    <div class="flex flex-col items-center cursor-pointer relative active-scale group">
+                        <span class="absolute -top-2 bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wide z-10">New</span>
+                        <div class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
+                            <i class="fa-solid fa-qrcode text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">My QR Code</span>
+                    </div>
+
+                   <!-- Wrapper added around the button block -->
+<a href="check-balance.html" class="flex flex-col items-center cursor-pointer active-scale group">
+    <div class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
+        <i class="fa-solid fa-wallet text-xl"></i>
+    </div>
+    <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Check Balance</span>
+</a>
+
+                    <!-- Icon 6 -->
+                    <div class="flex flex-col items-center cursor-pointer active-scale group">
+                        <div class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
+                            <i class="fa-solid fa-hand-holding-dollar text-2xl"></i>
+                        </div>
+                        <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Request Money</span>
+                    </div>
+
+                    <!-- Icon 7 -->
+                    <div class="flex flex-col items-center cursor-pointer active-scale group">
+                        <div class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
+                            <i class="fa-solid fa-arrows-rotate text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Self Transfer</span>
+                    </div>
+
+                    <!-- Icon 8 -->
+<!-- Icon 8 (Updated with Link) -->
+<a href="history.html" class="flex flex-col items-center cursor-pointer active-scale group">
+    <div class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
+        <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+    </div>
+    <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Transaction History</span>
+</a>
+
+                </div>
+            </div>
+
+            <!-- BALANCE & CARDS ACCOUNT GRID -->
+            <div class="px-4 mt-5 grid grid-cols-2 gap-3">
+                <!-- Card A: UPI Lite Info -->
+                <div class="bg-[#fde047] bg-opacity-35 p-3.5 rounded-2xl border border-amber-200 flex flex-col justify-between relative cursor-pointer shadow-sm active-scale">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-amber-800 uppercase tracking-wide">UPI LITE BALANCE</p>
+                            <!-- Live Updatable Balance Value -->
+                            <h2 id="upiLiteDisplay" class="text-xl font-black text-gray-900 mt-1 transition-all duration-500">₹500</h2>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#162a5b] shadow-sm"><i class="fa-solid fa-bolt text-xs"></i></div>
+                    </div>
+                    <button class="mt-4 w-full bg-[#162a5b] text-white text-xs font-bold py-2 rounded-full shadow-sm active-scale">Top up</button>
+                    <i class="fa-solid fa-chevron-right text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 text-xs"></i>
+                </div>
+                <!-- Card B: Credit Card Manager -->
+                <div class="bg-[#fde047] bg-opacity-35 p-3.5 rounded-2xl border border-amber-200 flex flex-col justify-between relative cursor-pointer shadow-sm active-scale">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-amber-800 uppercase tracking-wide">CREDIT CARD</p>
+                            <h2 class="text-xl font-black text-gray-900 mt-1">2</h2>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#162a5b] shadow-sm"><i class="fa-solid fa-credit-card text-xs"></i></div>
+                    </div>
+                    <button class="mt-4 w-full bg-[#162a5b] text-white text-xs font-bold py-2 rounded-full shadow-sm active-scale">Manage</button>
+                    <i class="fa-solid fa-chevron-right text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- UNSETTLED RED ALERT BAR (With Real Functionality) -->
+            <div id="unsettledAlertBar" class="px-4 mt-4 transition-all duration-500 ease-in-out">
+                <div class="bg-[#eb5757] text-white px-4 py-3 rounded-2xl flex justify-between items-center shadow-md">
+                    <div class="flex items-center gap-2.5 text-sm font-bold">
+                        <i id="settleIcon" class="fa-solid fa-circle-exclamation text-base"></i>
+                        <span id="settleText">Unsettled UPI LITE Balance</span>
+                    </div>
+                    <!-- Clicking this triggers settlement -->
+                    <div onclick="settleBalanceAmount()" class="flex items-center gap-3 font-black text-sm bg-black bg-opacity-20 hover:bg-opacity-30 px-3 py-1.5 rounded-xl cursor-pointer active-scale transition-all">
+                        <span id="unsettledAmount">₹140</span>
+                        <i id="refreshSpinner" class="fa-solid fa-rotate-right text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SET UP MANDATES GREEN BAR (Removable Frame) -->
+            <div id="mandateBannerFrame" class="px-4 mt-4 transition-all duration-500 ease-in-out">
+                <div class="bg-[#bbf7d0] text-emerald-950 px-4 py-3 rounded-2xl flex justify-between items-center relative shadow-sm border border-emerald-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-emerald-700 shadow-sm"><i class="fa-solid fa-file-invoice text-base"></i></div>
+                        <div>
+                            <p class="text-xs font-black leading-tight text-emerald-900">Never miss a payment of your bills.</p>
+                            <p class="text-xs font-black underline decoration-2 cursor-pointer mt-1 text-emerald-800">Set up mandates <i class="fa-solid fa-arrow-right text-[10px]"></i></p>
+                        </div>
+                    </div>
+                    <!-- Action button to remove bar -->
+                    <button onclick="closeMandateBanner()" class="w-6 h-6 rounded-full hover:bg-emerald-200 flex items-center justify-center active-scale transition-all absolute right-3 top-3">
+                        <i class="fa-solid fa-xmark text-sm opacity-70"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RECHARGE & BILL PAYMENTS UTILITY GRID -->
+            <div class="px-4 mt-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="text-xs font-black text-gray-400 tracking-widest uppercase">RECHARGE & BILL PAYMENTS</h4>
+                    <button id="utilityViewAllBtn" class="text-xs font-black text-blue-700 flex items-center gap-1 transition-all active:scale-95 bg-blue-50 px-3 py-1.5 rounded-full">
+                        <span id="utilityBtnText">View All</span> <i id="utilityBtnIcon" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"></i>
+                    </button>
+                </div>
+                
+                <!-- Core Group -->
+                <div class="grid grid-cols-4 gap-2 text-center">
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-bolt"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Electricity</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-tag"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">FASTag</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-handshake"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Loan</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-mobile-button"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Postpaid</span>
+                    </div>
+                </div>
+
+                <!-- Expanded Group (Collapsible via JS) -->
+                <div id="extendedUtilityGrid" class="hidden grid grid-cols-4 gap-2 text-center mt-3 pt-3 border-t border-dashed border-gray-200 transition-all duration-500">
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-tv"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">DTH</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-fire-burner"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Piped Gas</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-droplet"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Water</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-wifi"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Broadband</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREMIUM INSURANCE & INVESTMENTS SECTION -->
+            <div class="px-4 mt-6">
+                <h4 class="text-xs font-black text-gray-400 tracking-widest uppercase mb-3">INSURANCE & INVESTMENTS</h4>
+                <div class="grid grid-cols-4 gap-2 text-center">
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-car-burst"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Motor Ins.</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Health Ins.</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-chart-line"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Mutual Funds</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer active-scale">
+                        <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl"><i class="fa-solid fa-coins"></i></div>
+                        <span class="text-[11px] font-bold text-gray-600">Digi Gold</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALUE PROPOSITION MARKETING ADS -->
+            <div class="px-4 mt-6 mb-12">
+                <h4 class="text-xs font-black text-gray-400 tracking-widest uppercase mb-3">TRENDING OFFERS</h4>
+                <div class="bg-gradient-to-r from-purple-100 to-indigo-100 p-4 rounded-2xl border border-indigo-200 flex items-center justify-between shadow-sm">
+                    <div>
+                        <span class="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Exclusive</span>
+                        <h3 class="text-sm font-black text-indigo-950 mt-1">Flat 10% Off on Swiggy</h3>
+                        <p class="text-xs font-medium text-indigo-700 mt-0.5">Valid on BHIM UPI payments above ₹399</p>
+                    </div>
+                    <i class="fa-solid fa-pizza-slice text-4xl text-indigo-500 opacity-50"></i>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FLOATING BOTTOM SMART SYSTEM CONTROLS (FIXED POSITION) -->
+        <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[88%] max-w-[370px] bg-[#12234e] rounded-full py-2.5 px-4 flex justify-between items-center shadow-2xl text-white z-50 border border-slate-800">
+            <!-- Tap Interface -->
+            <button class="flex flex-col items-center flex-1 py-1 active-scale">
+                <i class="fa-solid fa-hand-pointer text-lg text-amber-400 mb-0.5"></i>
+                <span class="text-xs font-bold tracking-wide">Tap</span>
+            </button>
+            <!-- Core QR Scanner (Highlighted Unit) -->
+            <button class="flex flex-col items-center flex-1 py-1 bg-[#1a2e63] rounded-full border border-blue-900 shadow-xl transform -translate-y-2 scale-105 active-scale transition-all">
+                <i class="fa-solid fa-qrcode text-xl text-amber-400 mb-0.5"></i>
+                <span class="text-xs font-black tracking-wide">Scan</span>
+            </button>
+            <!-- Voice Interface -->
+            <button class="flex flex-col items-center flex-1 py-1 active-scale">
+                <i class="fa-solid fa-microphone text-lg text-amber-400 mb-0.5"></i>
+                <span class="text-xs font-bold tracking-wide">Voice</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Swiper Core Component JS Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        
+    // जब भी होम पेज लोड होगा, यह लोकल स्टोरेज से नाम चेक करके बदल देगा
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedName = localStorage.getItem("upiUserName");
+        if (savedName) {
+            const homeNameEl = document.getElementById("homeNameDisplay");
+            if (homeNameEl) {
+                homeNameEl.innerText = savedName;
+            }
+        }
+    });
+
+
+        // Initialize Core 4-Banner Automatic Carousel Engine
+        var swiper = new Swiper(".mainPromoSwiper", {
+            loop: true,
+            autoplay: {
+                delay: 3000, 
+                disableOnInteraction: false
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true
+            },
+        });
+
+        // 1. DISMISS FUNCTION FOR SET UP MANDATE BAR
+        function closeMandateBanner() {
+            const banner = document.getElementById('mandateBannerFrame');
+            banner.style.opacity = '0';
+            banner.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                banner.remove(); // Completely removes frame layout from hierarchy
+            }, 500);
+        }
+
+        // 2. LIVE SETTLEMENT UTILITY ENGINE FOR RED UNSETTLED BAR
+        function settleBalanceAmount() {
+            const spinner = document.getElementById('refreshSpinner');
+            const amountText = document.getElementById('unsettledAmount');
+            const settleText = document.getElementById('settleText');
+            const alertBar = document.getElementById('unsettledAlertBar');
+            const upiLiteDisplay = document.getElementById('upiLiteDisplay');
+            const settleIcon = document.getElementById('settleIcon');
+
+            // Start processing spinner state
+            spinner.classList.add('animate-spin');
+            settleText.innerText = "Settling your balance...";
+
+            setTimeout(() => {
+                // Update text configurations to success state
+                spinner.classList.remove('animate-spin');
+                settleIcon.className = "fa-solid fa-circle-check text-base";
+                alertBar.firstElementChild.className = "bg-emerald-600 text-white px-4 py-3 rounded-2xl flex justify-between items-center shadow-md transition-all";
+                settleText.innerText = "Successfully Settled!";
+                amountText.innerText = "₹0";
+
+                // Update Main Balance State from 500 to 640 (500 + 140)
+                upiLiteDisplay.innerText = "₹640";
+                upiLiteDisplay.classList.add('text-emerald-600', 'scale-110');
+
+                // Gracefully slide out and clean up from UI view
+                setTimeout(() => {
+                    alertBar.style.opacity = '0';
+                    alertBar.style.height = '0px';
+                    alertBar.style.overflow = 'hidden';
+                    alertBar.style.marginTop = '0px';
+                    upiLiteDisplay.classList.remove('text-emerald-600', 'scale-110');
+                    setTimeout(() => { alertBar.remove(); }, 500);
+                }, 1500);
+
+            }, 1200); // Trigger settlement inside a mock time of 1.2s
+        }
+
+        // 3. UTILITY EXPANDABLE GRID (VIEW ALL BUTTON CONTROL)
+        const utilityBtn = document.getElementById('utilityViewAllBtn');
+        const extendedGrid = document.getElementById('extendedUtilityGrid');
+        const utilityBtnText = document.getElementById('utilityBtnText');
+        const utilityBtnIcon = document.getElementById('utilityBtnIcon');
+
+        utilityBtn.addEventListener('click', () => {
+            if (extendedGrid.classList.contains('hidden')) {
+                extendedGrid.classList.remove('hidden');
+                utilityBtnText.innerText = "View Less";
+                utilityBtnIcon.classList.add('rotate-180');
+            } else {
+                extendedGrid.classList.add('hidden');
+                utilityBtnText.innerText = "View All";
+                utilityBtnIcon.classList.remove('rotate-180');
+            }
+        });
+    </script>
+</body>
+</html>

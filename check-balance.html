@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextGen Pay - Secure Balance Check</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+        }
+        .active-scale:active {
+            transform: scale(0.95);
+        }
+        .shake {
+            animation: shake 0.35s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+        .custom-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen p-0 md:p-4 selection:bg-indigo-500 selection:text-white">
+
+    <!-- Mobile Simulator Frame Wrap -->
+    <div class="w-full max-w-md bg-slate-900 text-slate-100 min-h-screen shadow-2xl relative flex flex-col justify-between rounded-none md:rounded-[48px] md:min-h-[850px] md:max-h-[880px] border-0 md:border-8 border-slate-800 overflow-hidden">
+        
+        <!-- DASHBOARD SCREEN -->
+        <div id="dashboardScreen" class="flex-1 flex flex-col justify-between pb-8 z-10">
+            <div>
+                <!-- Premium Glass Header -->
+                <header class="p-6 flex justify-between items-center bg-slate-900/80 border-b border-slate-800/60 sticky top-0 custom-blur z-20">
+                    <a href="index.html" class="w-11 h-11 flex items-center justify-center text-slate-400 bg-slate-800/50 rounded-2xl hover:text-white hover:bg-slate-800 transition-all active-scale">
+                        <i class="fa-solid fa-arrow-left-long text-lg"></i>
+                    </a>
+                    <div class="text-center">
+                        <h1 class="text-base font-extrabold tracking-tight text-white">Account Balance</h1>
+                        <p class="text-[10px] font-bold text-indigo-400 tracking-wider uppercase">Secure UPI Core</p>
+                    </div>
+                    <div class="w-11 h-11 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400">
+                        <i class="fa-solid fa-shield-halved text-lg"></i>
+                    </div>
+                </header>
+
+                <!-- Search & Filters -->
+                <div class="px-6 pt-5">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500 text-sm"></i>
+                        <input type="text" id="bankSearchInput" oninput="filterBanks()" placeholder="Search connected banks..." class="w-full bg-slate-800/50 border border-slate-800 rounded-2xl py-3 pl-11 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:bg-slate-800/80 transition-all">
+                    </div>
+                </div>
+
+                <!-- Accounts Container -->
+                <main class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest">Select Linked Account</p>
+                        <span id="bankCountBadge" class="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-400 font-bold">3 Accounts</span>
+                    </div>
+                    <div id="bankListContainer" class="space-y-4.5">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
+                </main>
+            </div>
+
+            <!-- Footer Ecosystem Branding -->
+            <footer class="flex flex-col items-center opacity-40">
+                <p class="text-[9px] font-extrabold tracking-[0.2em] text-slate-500 uppercase">Multi-Bank Shared Platform</p>
+                <div class="flex items-center gap-1 mt-1.5 font-black text-sm italic tracking-tighter">
+                    <span class="text-slate-400">u</span>
+                    <span class="text-indigo-400">p</span>
+                    <span class="text-emerald-400">i</span>
+                </div>
+            </footer>
+        </div>
+
+        <!-- ENHANCED UPI PIN SCREEN OVERLAY -->
+        <div id="upiPinScreen" class="hidden absolute inset-0 bg-slate-950 text-white flex flex-col justify-between z-50 animate-fade-in">
+            <!-- Header -->
+            <div class="p-6 flex justify-between items-center border-b border-slate-900 bg-slate-900/50 custom-blur">
+                <div class="flex items-center gap-3">
+                    <button onclick="closeUpiScreen()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white active-scale transition-all">
+                        <i class="fa-solid fa-xmark text-base"></i>
+                    </button>
+                    <div>
+                        <span id="upiBankName" class="font-extrabold text-sm tracking-wide block text-slate-100">BANK NAME</span>
+                        <span class="text-[10px] font-bold text-slate-500 block uppercase tracking-wider">UPI Authentication</span>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-3 py-1 rounded-xl text-xs font-black tracking-wider shadow-lg shadow-indigo-500/20">UPI</div>
+            </div>
+
+            <!-- Pin Display & Biometric Toggle -->
+            <div class="flex-1 flex flex-col items-center justify-center px-8 relative">
+                <!-- Watermark Lock Icon -->
+                <i class="fa-solid fa-lock text-slate-900 text-9xl absolute z-0 pointer-events-none opacity-40"></i>
+
+                <div class="z-10 text-center w-full">
+                    <p class="text-slate-400 text-[11px] font-extrabold tracking-widest uppercase mb-4">ENTER 6-DIGIT SECURITY PIN</p>
+                    
+                    <!-- Code Input Dots Container -->
+                    <div id="pinDotsContainer" class="flex justify-center gap-4.5 my-6">
+                        <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-700 bg-transparent transition-all duration-150"></div>
+                        <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-700 bg-transparent transition-all duration-150"></div>
+                        <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-700 bg-transparent transition-all duration-150"></div>
+                        <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-700 bg-transparent transition-all duration-150"></div>
+                        <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-700 bg-transparent transition-all duration-150"></div>
+                        <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-700 bg-transparent transition-all duration-150"></div>
+                    </div>
+                    
+                    <p id="pinMessage" class="text-slate-500 text-xs mt-3 text-center h-5 font-medium tracking-wide transition-all"></p>
+                </div>
+            </div>
+
+            <!-- Smart Custom Keyboard -->
+            <div class="bg-slate-900/60 border-t border-slate-900 text-center text-xl select-none custom-blur grid grid-cols-3 gap-0.5 p-2">
+                <div onclick="pressKey('1')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">1</div>
+                <div onclick="pressKey('2')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">2</div>
+                <div onclick="pressKey('3')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">3</div>
+                <div onclick="pressKey('4')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">4</div>
+                <div onclick="pressKey('5')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">5</div>
+                <div onclick="pressKey('6')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">6</div>
+                <div onclick="pressKey('7')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">7</div>
+                <div onclick="pressKey('8')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">8</div>
+                <div onclick="pressKey('9')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">9</div>
+                
+                <!-- Quick Fingerprint Biometric Trigger -->
+                <div onclick="triggerBiometricMock()" class="py-5 cursor-pointer text-indigo-400 hover:bg-slate-800/40 rounded-2xl flex items-center justify-center transition-all active-scale">
+                    <i class="fa-solid fa-fingerprint text-2xl animate-pulse"></i>
+                </div>
+                <div onclick="pressKey('0')" class="py-5 font-bold cursor-pointer text-slate-200 hover:bg-slate-800/40 rounded-2xl active:bg-indigo-600 active:text-white transition-all duration-75">0</div>
+                
+                <!-- Delete -->
+                <div onclick="pressKey('delete')" class="py-5 cursor-pointer text-slate-500 hover:bg-slate-800/40 rounded-2xl flex items-center justify-center transition-all active:text-white">
+                    <i class="fa-solid fa-delete-left text-lg"></i>
+                </div>
+            </div>
+            
+            <!-- Safe Check Button Bar -->
+            <div class="px-6 pb-6 bg-slate-900/60 border-0">
+                <button onclick="submitPin()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-xl shadow-indigo-600/20 active-scale flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-circle-check"></i> Validate Secret PIN
+                </button>
+            </div>
+        </div>
+
+        <!-- PREMIUM BALANCE DISPLAY & MINI-STATEMENT SCREEN -->
+        <div id="resultScreen" class="hidden absolute inset-0 bg-slate-950 flex flex-col justify-between p-6 z-50 overflow-y-auto">
+            <div class="flex-1 flex flex-col items-center justify-center w-full py-4">
+                
+                <!-- Dynamic Processing Skeleton Loader -->
+                <div id="loadingState" class="flex flex-col items-center gap-4 text-center my-auto">
+                    <div class="relative w-16 h-16 flex items-center justify-center">
+                        <div class="absolute inset-0 border-4 border-indigo-500/20 rounded-full"></div>
+                        <div class="absolute inset-0 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                        <i class="fa-solid fa-building-columns text-indigo-400 text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-white font-bold text-sm tracking-wide">Connecting Bank Servers</p>
+                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">End-to-End Encrypted Handshake...</p>
+                    </div>
+                </div>
+
+                <!-- Main Success Content Panel -->
+                <div id="balanceContent" class="hidden w-full flex flex-col items-center animate-fade-in">
+                    <!-- Shield Success Stamp -->
+                    <div class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center text-xl mb-4 shadow-lg shadow-emerald-500/5">
+                        <i class="fa-solid fa-vault"></i>
+                    </div>
+                    
+                    <h2 id="resultBankName" class="text-lg font-black text-white">BANK NAME</h2>
+                    <p id="resultBankAcc" class="text-xs text-slate-500 font-bold tracking-wider mt-0.5">SAVINGS ACCOUNT •• 0000</p>
+                    
+                    <!-- Balance Display Block -->
+                    <div class="mt-6 p-6 bg-gradient-to-br from-slate-900 to-slate-900/60 border border-slate-800/80 rounded-[28px] w-full relative overflow-hidden shadow-inner">
+                        <div class="absolute top-0 right-0 p-8 opacity-[0.02] text-white">
+                            <i class="fa-solid fa-indian-rupee-sign text-8xl"></i>
+                        </div>
+                        <p class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Available Balance</p>
+                        <p id="finalBalanceText" class="text-3xl font-black tracking-tight text-white mt-1.5">₹0.00</p>
+                        <div class="mt-3 pt-3 border-t border-slate-800/60 flex justify-between items-center text-[10px] text-slate-400 font-semibold">
+                            <span>Status: Active & Secure</span>
+                            <span class="text-emerald-400"><i class="fa-solid fa-circle text-[6px] mr-1 align-middle"></i>Realtime</span>
+                        </div>
+                    </div>
+
+                    <!-- ADVANCED FEATURE: MINI STATEMENT CORE -->
+                    <div class="w-full mt-6 text-left">
+                        <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest px-1 mb-3">Ledger Statements</p>
+                        <div id="miniStatementContainer" class="space-y-2 w-full">
+                            <!-- Dynamic Content generated by JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Bottom Control Action -->
+            <button onclick="resetToDashboard()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-4 rounded-2xl border border-slate-700/60 shadow-lg active-scale transition-all mt-4">
+                Dismiss Ledger
+            </button>
+        </div>
+
+    </div>
+
+    <!-- BUSINESS & SECURITY INTELLIGENCE JAVASCRIPT CORE -->
+    <script>
+        const MASTER_UPI_PIN = "123456"; // System Root Key
+        let currentPin = "";
+        let selectedBankIndex = null;
+        let userBanks = [];
+
+        // App Boot Loader
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeDatabase();
+            renderDashboardBanks();
+        });
+
+        // 1. MEMORY ENGINE MANAGEMENT
+        function initializeDatabase() {
+            const savedData = localStorage.getItem('savedUserBanks');
+            if (savedData) {
+                userBanks = JSON.parse(savedData);
+            } else {
+                // Mock Initialization Array (Synchronized schema)
+                userBanks = [
+                    { name: "CANARA BANK", account: "6954", balance: 25000.00, code: "CNRB" },
+                    { name: "STATE BANK OF INDIA", account: "1122", balance: 4500.50, code: "SBI" },
+                    { name: "AXIS BANK", account: "9946", balance: 199946.81, code: "AXIS" }
+                ];
+                localStorage.setItem('savedUserBanks', JSON.stringify(userBanks));
+            }
+            document.getElementById('bankCountBadge').innerText = `${userBanks.length} Connected`;
+        }
+
+        // 2. DASHBOARD ENGINE (Reactive Render Engine)
+        function renderDashboardBanks(filterText = "") {
+            const container = document.getElementById('bankListContainer');
+            container.innerHTML = "";
+
+            const filtered = userBanks.filter(b => b.name.toLowerCase().includes(filterText.toLowerCase()));
+
+            if(filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 border border-dashed border-slate-800 rounded-3xl">
+                        <i class="fa-solid fa-building-columns text-slate-700 text-3xl mb-2"></i>
+                        <p class="text-sm font-bold text-slate-500">No matching banks active</p>
+                    </div>`;
+                return;
+            }
+
+            filtered.forEach((bank, dynamicIndex) => {
+                // Find true index mapping
+                const trueIndex = userBanks.findIndex(b => b.account === bank.account);
+                
+                const card = document.createElement('div');
+                card.className = "flex justify-between items-center p-4 bg-gradient-to-r from-slate-900 to-slate-900/40 border border-slate-800/80 hover:border-indigo-500/40 rounded-2xl cursor-pointer transition-all active-scale group";
+                card.onclick = () => openPinScreen(trueIndex);
+                card.innerHTML = `
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-slate-800 text-slate-400 group-hover:bg-indigo-600/10 group-hover:text-indigo-400 rounded-xl flex items-center justify-center text-base border border-slate-800 transition-all">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-sm text-slate-100 group-hover:text-white transition-all">${bank.name}</h3>
+                            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Savings •• ${bank.account}</p>
+                        </div>
+                    </div>
+                    <div class="w-7 h-7 rounded-lg bg-slate-900 flex items-center justify-center text-slate-600 group-hover:text-slate-400 transition-all text-[11px]">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Search Filter Engine
+        function filterBanks() {
+            const val = document.getElementById('bankSearchInput').value;
+            renderDashboardBanks(val);
+        }
+
+        // 3. SECURE AUTHENTICATION SCREEN CONTROLS
+        function openPinScreen(index) {
+            selectedBankIndex = index;
+            currentPin = "";
+            updatePinDots();
+            
+            const msg = document.getElementById('pinMessage');
+            msg.innerText = "System Ready. Node Handshake verified.";
+            msg.className = "text-slate-500 text-[11px] font-semibold tracking-wider uppercase mt-3 text-center h-5";
+
+            document.getElementById('upiBankName').innerText = userBanks[index].name;
+            document.getElementById('upiPinScreen').classList.remove('hidden');
+        }
+
+        function closeUpiScreen() {
+            document.getElementById('upiPinScreen').classList.add('hidden');
+        }
+
+        // Keyboard Action Processor
+        function pressKey(key) {
+            const container = document.getElementById('pinDotsContainer');
+            container.classList.remove('shake'); 
+
+            if (key === 'delete') {
+                if (currentPin.length > 0) currentPin = currentPin.slice(0, -1);
+            } else {
+                if (currentPin.length < 6) currentPin += key;
+            }
+            updatePinDots();
+        }
+
+        function updatePinDots() {
+            const dots = document.getElementById('pinDotsContainer').children;
+            for (let i = 0; i < 6; i++) {
+                if (i < currentPin.length) {
+                    dots[i].className = "w-3.5 h-3.5 rounded-full bg-white scale-110 border-2 border-indigo-500 shadow-md shadow-indigo-500/50 transition-all duration-100";
+                } else {
+                    dots[i].className = "w-3.5 h-3.5 rounded-full border-2 border-slate-700 bg-transparent transition-all duration-100";
+                }
+            }
+        }
+
+        // FEATURE: Biometric Automation Loop Simulation
+        function triggerBiometricMock() {
+            const msg = document.getElementById('pinMessage');
+            msg.innerText = "Scanning Biometrics/Fingerprint Core...";
+            msg.className = "text-indigo-400 text-xs mt-3 text-center h-5 font-bold animate-pulse";
+            
+            setTimeout(() => {
+                currentPin = MASTER_UPI_PIN;
+                updatePinDots();
+                submitPin();
+            }, 1200);
+        }
+
+        // 4. BALANCES AND STATEMENT SYNTHESIS
+        function submitPin() {
+            const msg = document.getElementById('pinMessage');
+            
+            if (currentPin.length < 6) {
+                msg.innerText = "Error: Input underflow (6-Digits needed)";
+                msg.className = "text-amber-500 text-xs mt-3 text-center h-5 font-bold tracking-wide";
+                return;
+            }
+
+            if (currentPin === MASTER_UPI_PIN) {
+                document.getElementById('upiPinScreen').classList.add('hidden');
+                document.getElementById('resultScreen').classList.remove('hidden');
+                
+                document.getElementById('loadingState').classList.remove('hidden');
+                document.getElementById('balanceContent').classList.add('hidden');
+
+                // Hardware Latency Emulation Loop
+                setTimeout(() => {
+                    document.getElementById('loadingState').classList.add('hidden');
+                    
+                    const freshData = JSON.parse(localStorage.getItem('savedUserBanks'));
+                    const activeBank = freshData[selectedBankIndex];
+
+                    document.getElementById('resultBankName').innerText = activeBank.name;
+                    document.getElementById('resultBankAcc').innerText = `SAVINGS ACCOUNT •• ${activeBank.account}`;
+                    document.getElementById('finalBalanceText').innerText = `₹${Number(activeBank.balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                    
+                    // Render dynamically generated transaction statements
+                    buildMiniStatement(activeBank);
+                    
+                    document.getElementById('balanceContent').classList.remove('hidden');
+                }, 1400);
+
+            } else {
+                msg.innerText = "Authentication Failed: Bad UPI Security Pin";
+                msg.className = "text-rose-500 text-xs mt-3 text-center h-5 font-extrabold tracking-wide uppercase";
+                
+                const container = document.getElementById('pinDotsContainer');
+                container.classList.add('shake');
+                
+                currentPin = "";
+                setTimeout(updatePinDots, 250);
+            }
+        }
+
+        // FEATURE: Intelligent Ledger Parser
+        function buildMiniStatement(bankObj) {
+            const container = document.getElementById('miniStatementContainer');
+            container.innerHTML = "";
+
+            // Dynamic algorithmic statements values generation based on balances
+            const logs = [
+                { title: "UPI Transfer / Swiggy Logistics", desc: "Ref #62190022", amt: -340.50, date: "Today, 02:14 PM" },
+                { title: "Salary Auto-Credit / Corp HR", desc: "Ref #99104523", amt: 12000.00, date: "05 Jul 2026" },
+                { title: "ATM Cash Dispenser / Node 4", desc: "Ref #11204008", amt: -2000.00, date: "28 Jun 2026" }
+            ];
+
+            logs.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "flex justify-between items-center p-3.5 bg-slate-900/40 border border-slate-900 rounded-xl text-xs";
+                
+                const isCr = item.amt > 0;
+                const amtFormatted = (isCr ? "+ ₹" : "- ₹") + Math.abs(item.amt).toLocaleString('en-IN', {minimumFractionDigits:2});
+
+                row.innerHTML = `
+                    <div>
+                        <p class="font-extrabold text-slate-200 text-xs">${item.title}</p>
+                        <p class="text-[10px] font-bold text-slate-500 mt-0.5">${item.date} • ${item.desc}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-black ${isCr ? 'text-emerald-400' : 'text-slate-300'}">${amtFormatted}</p>
+                        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">${isCr ? 'CR' : 'DR'}</p>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function resetToDashboard() {
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('bankSearchInput').value = ""; // Clear Search
+            renderDashboardBanks(); 
+        }
+    </script>
+</body>
+</html>

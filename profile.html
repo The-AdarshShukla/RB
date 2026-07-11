@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BHIM UPI - User Profile</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .active-scale:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-slate-300">
+
+    <!-- Mobile Device Simulator Core Frame -->
+    <div class="w-full max-w-md bg-[#1d357d] min-h-screen shadow-2xl relative flex flex-col pb-10 overflow-y-auto overflow-x-hidden rounded-none md:rounded-[40px] md:min-h-[850px] md:max-h-[900px]">
+        
+        <!-- TOP NAVIGATION BAR -->
+        <div class="p-5 flex justify-end items-center sticky top-0 z-50">
+            <!-- Close Button (Redirects back to Home Page) -->
+            <a href="index.html" class="w-8 h-8 rounded-full bg-black bg-opacity-20 flex items-center justify-center text-white active-scale transition-all">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </a>
+        </div>
+
+        <!-- PROFILE HEADER CARD (USER INFO) -->
+        <div class="px-5 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <!-- User Profile Image -->
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150" alt="User Profile" class="w-16 h-16 rounded-full border-2 border-blue-400 object-cover shadow-md">
+                </div>
+                <div>
+                    <!-- Dynamic Name Element -->
+                    <h2 id="profileNameDisplay" class="font-black text-white text-xl tracking-tight">User Name</h2>
+                    <p class="text-sm text-slate-300 font-semibold mt-0.5">+91 9999999999</p>
+                </div>
+            </div>
+            <!-- Edit Profile Button -->
+            <button onclick="changeProfileName()" class="w-10 h-10 rounded-full bg-blue-600 bg-opacity-50 border border-blue-400 flex items-center justify-center text-white active-scale transition-all hover:bg-opacity-70">
+                <i class="fa-solid fa-pen text-sm"></i>
+            </button>
+        </div>
+
+        <!-- UPI ID SECTION -->
+        <div class="px-5 mt-5 flex justify-between items-center text-sm">
+            <div class="flex items-center gap-2 text-slate-300 font-medium">
+                <span>9999999999@upi</span>
+                <i class="fa-regular fa-copy text-white cursor-pointer hover:text-blue-400 active-scale p-1"></i>
+            </div>
+            <button class="text-white font-bold flex items-center gap-1 text-xs tracking-wide uppercase bg-white bg-opacity-10 px-3 py-1.5 rounded-full active-scale">
+                Manage UPI ID <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+
+        <!-- MAIN QR CODE BOX CONTAINER -->
+        <div class="mx-5 mt-5 bg-[#3352a3] rounded-[32px] p-6 flex flex-col items-center shadow-inner relative border border-blue-800">
+            <!-- Share Diagonal Icon Wrapper -->
+            <button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-900 shadow-md active-scale">
+                <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+            </button>
+
+            <!-- QR Code Box -->
+            <div class="bg-white p-6 rounded-3xl shadow-lg mt-4 w-64 h-64 flex flex-col items-center justify-center relative">
+                <div class="w-full h-full border-[6px] border-blue-900 p-2 flex flex-col justify-between relative rounded-xl">
+                    <div class="flex justify-between">
+                        <div class="w-14 h-14 border-4 border-blue-900 rounded"></div>
+                        <div class="w-14 h-14 border-4 border-blue-900 rounded"></div>
+                    </div>
+                    <!-- Center Logo Mock -->
+                    <div class="absolute inset-0 m-auto w-10 h-10 bg-white shadow-md rounded-lg flex items-center justify-center p-1 border border-gray-100 z-10">
+                        <div class="flex flex-col w-full h-full justify-between">
+                            <div class="bg-orange-500 h-[30%] w-full rounded-t-sm"></div>
+                            <div class="bg-white h-[30%] w-full flex items-center justify-center text-[6px] text-blue-800 font-bold">●</div>
+                            <div class="bg-emerald-600 h-[30%] w-full rounded-b-sm"></div>
+                        </div>
+                    </div>
+                    <div class="w-full flex justify-between items-end">
+                        <div class="w-14 h-14 border-4 border-blue-900 rounded"></div>
+                        <div class="grid grid-cols-4 gap-0.5 w-14 h-14 p-1">
+                            <div class="bg-blue-900 rounded-sm"></div><div class="bg-blue-900 rounded-sm"></div>
+                            <div class="bg-transparent"></div><div class="bg-blue-900 rounded-sm"></div>
+                            <div class="bg-blue-900 rounded-sm"></div><div class="bg-transparent"></div>
+                            <div class="bg-blue-900 rounded-sm"></div><div class="bg-blue-900 rounded-sm"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Action Buttons -->
+            <div class="w-full flex gap-4 mt-6">
+                <button class="flex-1 bg-white text-blue-900 font-black text-xs py-3 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-md active-scale">
+                    <i class="fa-solid fa-download"></i> Download QR
+                </button>
+                <button class="flex-1 bg-white text-blue-900 font-black text-xs py-3 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-md active-scale">
+                    <i class="fa-solid fa-share-nodes"></i> Share
+                </button>
+            </div>
+        </div>
+
+        <!-- MY LINKED BANK ACCOUNTS SECTION -->
+        <div class="px-5 mt-6">
+            <h4 class="text-xs font-black text-slate-300 tracking-wider mb-3 uppercase">My Linked Bank Accounts</h4>
+            <div class="flex items-center gap-3 w-full overflow-x-auto pb-2">
+                <div class="bg-white rounded-2xl p-3 flex items-center gap-3 min-w-[190px] shadow-md border border-slate-100 cursor-pointer active-scale">
+                    <div class="w-10 h-10 bg-slate-700 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-inner">ABC</div>
+                    <div>
+                        <h5 class="text-xs font-black text-gray-800 leading-tight">ABC Bank</h5>
+                        <p class="text-[11px] font-bold text-gray-400 mt-0.5">XXX 1736</p>
+                    </div>
+                </div>
+                <div class="border-2 border-dashed border-slate-400 rounded-2xl p-3 flex items-center justify-center gap-2 min-w-[190px] cursor-pointer active-scale text-white hover:border-white transition-all">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span class="text-xs font-black tracking-wide">Add bank account</span>
+                </div>
+                <div class="text-slate-300 pl-1"><i class="fa-solid fa-chevron-right text-sm"></i></div>
+            </div>
+        </div>
+
+        <!-- OTHER ACCOUNTS LIST SECTION -->
+        <div class="px-5 mt-5 flex-1">
+            <h4 class="text-xs font-black text-slate-300 tracking-wider mb-3 uppercase">Other Accounts</h4>
+            <div class="flex flex-col gap-3">
+                <div class="bg-[#29428f] rounded-2xl p-3.5 flex justify-between items-center shadow-sm border border-blue-900 cursor-pointer active-scale group">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-full bg-[#1c2e69] flex items-center justify-center text-amber-400 text-lg shadow"><i class="fa-solid fa-wallet"></i></div>
+                        <span class="text-xs font-extrabold text-white tracking-wide">UPI LITE Balance</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="bg-white text-blue-950 font-black text-[11px] px-3 py-1.5 rounded-full shadow-sm">Enable</button>
+                        <i class="fa-solid fa-chevron-right text-slate-300 text-xs transition-transform group-hover:translate-x-0.5"></i>
+                    </div>
+                </div>
+                <div class="bg-[#29428f] rounded-2xl p-3.5 flex justify-between items-center shadow-sm border border-blue-900 cursor-pointer active-scale group">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-full bg-[#1c2e69] flex items-center justify-center text-amber-400 text-lg shadow"><i class="fa-solid fa-credit-card"></i></div>
+                        <div>
+                            <span class="text-xs font-extrabold text-white tracking-wide block">Link RuPay Credit Card</span>
+                            <span class="text-[10px] font-bold text-blue-300 block mt-0.5">Pay with UPI</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 text-xs transition-transform group-hover:translate-x-0.5"></i>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center text-xs font-bold text-slate-400 mt-6 tracking-wide">Ver 3.0</footer>
+    </div>
+
+    <!-- JAVASCRIPT FOR ENGINE COUPLING & LOCALSTORAGE -->
+    <script>
+        // 1. Load Name from localStorage on Page Load
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedName = localStorage.getItem("upiUserName") || "User Name";
+            document.getElementById("profileNameDisplay").innerText = savedName;
+        });
+
+        // 2. Function to trigger Name Edit
+        function changeProfileName() {
+            const currentName = document.getElementById("profileNameDisplay").innerText;
+            const newName = prompt("अपना नया नाम दर्ज करें:", currentName);
+            
+            if (newName && newName.trim() !== "") {
+                const cleanedName = newName.trim();
+                // LocalStorage में सेव करें
+                localStorage.setItem("upiUserName", cleanedName);
+                // UI अपडेट करें
+                document.getElementById("profileNameDisplay").innerText = cleanedName;
+            }
+        }
+    </script>
+</body>
+</html>

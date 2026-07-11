@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Transaction History · UPI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0f172a; }
+        input:focus { outline: none; }
+        .active-scale:active { transform: scale(0.96); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* detail overlay - full screen with glassmorphism */
+        .detail-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, backdrop-filter 0.25s;
+            padding: 16px;
+        }
+        .detail-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .detail-card {
+            width: 100%;
+            max-width: 380px;
+            background: #ffffff;
+            border-radius: 40px;
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08);
+            transform: scale(0.94) translateY(10px);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .detail-overlay.active .detail-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        /* hidden transaction feature (discreet) */
+        .hidden-badge {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            padding: 3px 10px;
+            border-radius: 30px;
+            border: 1px solid #e2e8f0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .hidden-badge i { font-size: 8px; color: #94a3b8; }
+        .detail-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+        .status-pill {
+            border-radius: 100px;
+            padding: 4px 14px 4px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .detail-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen antialiased bg-slate-900 md:bg-slate-200">
+
+    <!-- Mobile container -->
+    <div class="w-full max-w-md bg-slate-50 min-h-screen shadow-2xl relative flex flex-col justify-between rounded-none md:rounded-[40px] md:min-h-[850px] md:max-h-[880px] border border-gray-100 overflow-hidden">
+
+        <!-- HEADER -->
+        <header class="p-4 flex justify-between items-center bg-white border-b border-gray-100 sticky top-0 z-10">
+            <a href="index.html" class="w-10 h-10 flex items-center justify-center text-gray-700 rounded-full hover:bg-gray-50 active-scale transition-all">
+                <i class="fa-solid fa-arrow-left text-lg"></i>
+            </a>
+            <div class="flex flex-col items-center">
+                <span class="text-sm font-black text-slate-800 tracking-wide uppercase">Transaction History</span>
+            </div>
+            <button onclick="clearHistory()" class="w-10 h-10 flex items-center justify-center text-red-500 rounded-full hover:bg-red-50 active-scale transition-all" title="Clear History">
+                <i class="fa-regular fa-trash-can text-lg"></i>
+            </button>
+        </header>
+
+        <!-- SEARCH & FILTER -->
+        <div class="bg-white px-4 pt-4 pb-2 border-b border-gray-100 flex flex-col gap-3">
+            <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-blue-500 focus-within:bg-white transition-all">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 mr-2.5 text-sm"></i>
+                <input type="text" id="historySearch" oninput="filterTransactions()" placeholder="Search by name, UPI ID or reference..." class="bg-transparent text-sm text-slate-700 w-full placeholder-slate-400 font-medium">
+            </div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1 text-xs font-bold select-none">
+                <button onclick="switchTab('all', this)" class="tab-btn px-4 py-2 bg-blue-600 text-white rounded-full transition-all shadow-sm">All</button>
+                <button onclick="switchTab('success', this)" class="tab-btn px-4 py-2 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 transition-all">Success</button>
+                <button onclick="switchTab('failed', this)" class="tab-btn px-4 py-2 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 transition-all">Failed</button>
+            </div>
+        </div>
+
+        <!-- TRANSACTION LIST -->
+        <main id="historyContainer" class="flex-1 overflow-y-auto px-4 py-3 space-y-2.5 no-scrollbar bg-slate-50">
+            <!-- dynamic render -->
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-white border-t border-gray-100 p-4 text-center">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">End of transaction history</p>
+        </footer>
+    </div>
+
+    <!-- ===== DETAIL OVERLAY (FULL SCREEN) ===== -->
+    <div id="detailOverlay" class="detail-overlay" onclick="closeDetail(event)">
+        <div class="detail-card" onclick="event.stopPropagation();">
+            <!-- inner content injected via js -->
+            <div id="detailContent" class="p-6 pb-8"></div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- DATA ----------
+        let allTransactions = [];
+        let currentFilter = 'all';
+        let currentDetailIndex = -1; // for hidden navigation
+
+        // ---------- MOCK / PERSIST ----------
+        function loadTransactions() {
+            let saved = JSON.parse(localStorage.getItem('upi_tx_history')) || [];
+            if (saved.length === 0) {
+                saved = [
+                    { name: "Rahul Verma", upi: "rahul@oksbi", amount: 1250.00, date: "10/07/2026 14:22", ref: "663920194852", status: "success", bank: "STATE BANK OF INDIA" },
+                    { name: "Zomato Premium", upi: "zomato@hdfcbank", amount: 349.00, date: "09/07/2026 21:05", ref: "663810482910", status: "success", bank: "HDFC BANK LTD" },
+                    { name: "Adarsh Shukla", upi: "adarsh1207@nsdl", amount: 5000.00, date: "08/07/2026 11:15", ref: "663749201945", status: "failed", bank: "CANARA BANK" },
+                    { name: "Aman Khurana", upi: "aman@ybl", amount: 45.00, date: "05/07/2026 18:40", ref: "663410294811", status: "success", bank: "CANARA BANK" },
+                    // additional hidden test
+                    { name: "Netflix India", upi: "netflix@icici", amount: 799.00, date: "03/07/2026 09:30", ref: "663201947233", status: "success", bank: "ICICI BANK" }
+                ];
+                localStorage.setItem('upi_tx_history', JSON.stringify(saved));
+            }
+            allTransactions = saved;
+            renderList(allTransactions);
+        }
+
+        // ---------- RENDER LIST ----------
+        function renderList(list) {
+            const container = document.getElementById('historyContainer');
+            container.innerHTML = "";
+            if (list.length === 0) {
+                container.innerHTML = `<div class="flex flex-col items-center justify-center pt-24 text-slate-400"><i class="fa-solid fa-receipt text-5xl mb-3 opacity-30"></i><p class="text-sm font-bold">No transactions found</p></div>`;
+                return;
+            }
+            list.forEach((tx, idx) => {
+                const isSuccess = tx.status === 'success';
+                const words = tx.name.split(" ");
+                let initials = words[0].charAt(0).toUpperCase();
+                if (words.length > 1 && words[1].length > 0) initials += words[1].charAt(0).toUpperCase();
+                const card = document.createElement('div');
+                card.className = "bg-white p-3.5 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center active-scale transition-all cursor-pointer";
+                // store original index for detail
+                card.dataset.idx = allTransactions.indexOf(tx);
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-full bg-slate-100 font-bold text-slate-600 flex items-center justify-center text-sm border border-slate-200">${initials}</div>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-black text-slate-800 leading-snug">${tx.name}</span>
+                            <span class="text-[11px] font-bold text-slate-400 mt-0.5">${tx.date}</span>
+                            <span class="text-[10px] font-semibold text-slate-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-building-columns text-[9px]"></i> ${tx.bank}</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-base font-black ${isSuccess ? 'text-slate-800' : 'text-slate-400 line-through'}">- ₹${Number(tx.amount).toFixed(2)}</span>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md mt-1.5 flex items-center gap-1 ${isSuccess ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'}">
+                            <i class="fa-solid ${isSuccess ? 'fa-circle-check' : 'fa-circle-xmark'} text-[9px]"></i>
+                            ${isSuccess ? 'Success' : 'Failed'}
+                        </span>
+                    </div>
+                `;
+                // --- CLICK: open detail ---
+                card.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const idx = parseInt(this.dataset.idx);
+                    if (!isNaN(idx)) openDetail(idx);
+                });
+                container.appendChild(card);
+            });
+        }
+
+        // ---------- FILTER + SEARCH ----------
+        function filterTransactions() {
+            const query = document.getElementById('historySearch').value.toLowerCase().trim();
+            let filtered = allTransactions.filter(tx => {
+                const matchesTab = (currentFilter === 'all') || (tx.status === currentFilter);
+                const matchesSearch = tx.name.toLowerCase().includes(query) || tx.upi.toLowerCase().includes(query) || tx.ref.toString().includes(query);
+                return matchesTab && matchesSearch;
+            });
+            renderList(filtered);
+        }
+
+        function switchTab(type, btn) {
+            currentFilter = type;
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.className = "tab-btn px-4 py-2 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 transition-all";
+            });
+            btn.className = "tab-btn px-4 py-2 bg-blue-600 text-white rounded-full transition-all shadow-sm";
+            filterTransactions();
+        }
+
+        function clearHistory() {
+            if (confirm("Delete all transaction history?")) {
+                localStorage.removeItem('upi_tx_history');
+                allTransactions = [];
+                renderList([]);
+                closeDetail();
+            }
+        }
+
+        // ========== DETAIL OVERLAY (FULL SCREEN) ==========
+        function openDetail(index) {
+            if (index < 0 || index >= allTransactions.length) return;
+            currentDetailIndex = index;
+            const tx = allTransactions[index];
+            const isSuccess = tx.status === 'success';
+            const overlay = document.getElementById('detailOverlay');
+            const content = document.getElementById('detailContent');
+
+            // -- hidden transaction feature: show "hidden" badge if amount < 100 (demo)
+            const isHidden = tx.amount < 100; 
+            const hiddenBadge = isHidden 
+                ? `<span class="hidden-badge"><i class="fa-regular fa-eye-slash"></i> hidden</span>` 
+                : '';
+
+            content.innerHTML = `
+                <!-- close button top right -->
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Transaction details</span>
+                    <button onclick="closeDetail()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-full transition-all active-scale">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- avatar + name + hidden badge -->
+                <div class="flex items-center gap-3 mt-1">
+                    <div class="w-14 h-14 rounded-full bg-slate-100 font-bold text-slate-700 flex items-center justify-center text-lg border border-slate-200">
+                        ${tx.name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-lg font-black text-slate-800">${tx.name}</span>
+                            ${hiddenBadge}
+                        </div>
+                        <span class="text-xs font-mono text-slate-400 flex items-center gap-1"><i class="fa-regular fa-circle-check text-[10px]"></i> ${tx.upi}</span>
+                    </div>
+                </div>
+
+                <!-- amount + status -->
+                <div class="mt-6 flex items-end justify-between border-b border-slate-100 pb-4">
+                    <div>
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Amount</span>
+                        <div class="detail-amount text-slate-800">- ₹${Number(tx.amount).toFixed(2)}</div>
+                    </div>
+                    <span class="status-pill ${isSuccess ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}">
+                        <i class="fa-solid ${isSuccess ? 'fa-circle-check' : 'fa-circle-xmark'} text-[11px]"></i> ${isSuccess ? 'Success' : 'Failed'}
+                    </span>
+                </div>
+
+                <!-- detail grid -->
+                <div class="mt-5 space-y-3 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-400 font-medium">Date & time</span><span class="font-semibold text-slate-700">${tx.date}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400 font-medium">Reference ID</span><span class="font-mono text-xs font-bold text-slate-700">${tx.ref}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400 font-medium">Bank</span><span class="font-semibold text-slate-700">${tx.bank}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400 font-medium">UPI ID</span><span class="font-mono text-xs font-semibold text-slate-600">${tx.upi}</span></div>
+                </div>
+
+                <!-- hidden transaction feature: extra note (professional) -->
+                ${isHidden ? `
+                <div class="mt-5 bg-slate-50 rounded-2xl px-4 py-3 border border-slate-200 flex items-center gap-3">
+                    <i class="fa-regular fa-eye-slash text-slate-400 text-sm"></i>
+                    <span class="text-[11px] font-semibold text-slate-500">This transaction is marked as <span class="text-slate-700 font-black">hidden</span> (amount below ₹100)</span>
+                </div>` : ''}
+
+                <!-- subtle navigation: previous / next (hidden transaction feature) -->
+                <div class="mt-6 flex gap-2 justify-center">
+                    <button onclick="navigateDetail(-1)" class="px-4 py-2 text-xs font-bold rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all active-scale flex items-center gap-1 ${currentDetailIndex <= 0 ? 'opacity-30 pointer-events-none' : ''}">
+                        <i class="fa-solid fa-chevron-left text-[10px]"></i> Prev
+                    </button>
+                    <button onclick="navigateDetail(1)" class="px-4 py-2 text-xs font-bold rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all active-scale flex items-center gap-1 ${currentDetailIndex >= allTransactions.length-1 ? 'opacity-30 pointer-events-none' : ''}">
+                        Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+                <div class="text-center mt-2 text-[9px] text-slate-300 font-bold tracking-widest">
+                    ${currentDetailIndex+1} of ${allTransactions.length}
+                </div>
+            `;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDetail(e) {
+            if (e && e.target && !e.target.closest('.detail-card')) {
+                // clicked on backdrop
+            }
+            const overlay = document.getElementById('detailOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // navigate within detail (hidden feature)
+        function navigateDetail(direction) {
+            const newIdx = currentDetailIndex + direction;
+            if (newIdx >= 0 && newIdx < allTransactions.length) {
+                openDetail(newIdx);
+            }
+        }
+
+        // attach close on backdrop
+        document.getElementById('detailOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeDetail();
+        });
+
+        // ---------- INIT ----------
+        window.addEventListener('DOMContentLoaded', loadTransactions);
+    </script>
+</body>
+</html>
