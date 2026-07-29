@@ -18,17 +18,24 @@
         .active-scale:active {
             transform: scale(0.95);
         }
-        /* Smooth transition for bottom sheet */
         .bottom-sheet {
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        /* Hide scrollbar for clean UI */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+        /* QR Data flash animation */
+        @keyframes flashGreen {
+            0% { background-color: transparent; }
+            50% { background-color: rgba(34, 197, 94, 0.3); }
+            100% { background-color: transparent; }
+        }
+        .qr-flash {
+            animation: flashGreen 0.8s ease-in-out;
         }
     </style>
 </head>
@@ -56,7 +63,7 @@
             <main class="flex-1 flex flex-col items-center pt-8 px-6 relative">
                 
                 <!-- Receiver Profile Header Card -->
-                <div class="w-full bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center relative">
+                <div id="receiverCard" class="w-full bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center relative transition-all">
                     <!-- Avatar -->
                     <div id="avatarBg" class="w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold shadow-inner transition-all duration-300 transform">
                         <span id="avatarInitials">AS</span>
@@ -75,6 +82,10 @@
                             </span>
                         </div>
                     </div>
+                    <!-- QR scanned badge -->
+                    <div id="qrBadge" class="hidden absolute -top-2 -right-2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                        <i class="fa-solid fa-qrcode text-xs"></i> Scanned
+                    </div>
                 </div>
 
                 <!-- Dynamic Amount Display Block -->
@@ -83,7 +94,6 @@
                         <span class="text-3xl font-medium text-gray-400 mr-1">₹</span>
                         <span id="amountDisplay" class="font-bold">0</span>
                     </div>
-                    <!-- Hidden real input to maintain backend consistency -->
                     <input type="number" id="amountInput" value="0" class="hidden">
                     <p id="balanceWarning" class="text-xs text-red-500 font-semibold mt-2 opacity-0 transition-opacity">Insufficient account balance</p>
                 </div>
@@ -228,46 +238,42 @@
 
     </div>
 
-    <!-- AUDIO ELEMENT: success.mp3 (place the file in the same folder) -->
+    <!-- AUDIO ELEMENT: success.mp3 -->
     <audio id="successAudio" src="https://www.image2url.com/r2/default/audio/1780748863455-197ee552-4642-42c9-9893-a97054543876.mp3" preload="auto"></audio>
 
     <!-- CODE LOGIC -->
     <script>
+        // =============================================
         // 1. AVATAR CONFIGS
+        // =============================================
         const nameInput = document.getElementById('receiverName');
         const receiverUpi = document.getElementById('receiverUpi');
         const avatarInitials = document.getElementById('avatarInitials');
         const avatarBg = document.getElementById('avatarBg');
+        const receiverCard = document.getElementById('receiverCard');
+        const qrBadge = document.getElementById('qrBadge');
         const colors = ['bg-indigo-500', 'bg-emerald-500', 'bg-purple-500', 'bg-blue-500', 'bg-amber-500', 'bg-rose-500'];
 
-        // UPI providers list for random generation
         const upiProviders = ['@paytm', '@googlepay', '@phonepe', '@amazonpay', '@upi', '@nsdl', '@okhdfc', '@axis', '@sbi', '@icici'];
 
         function generateUPIFromName(name) {
             if (!name || name.trim() === '') return 'user@upi';
             
-            // Clean the name: lowercase, remove special chars, replace spaces with dots
             let cleanName = name.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
             let parts = cleanName.split(/\s+/);
             
             let base = '';
             if (parts.length === 1) {
-                // Single name: take first 6 chars + random number
                 base = parts[0].substring(0, 6);
                 if (base.length < 3) base = base + 'user';
             } else if (parts.length === 2) {
-                // Two names: first name + last name initial or full
                 base = parts[0].substring(0, 4) + parts[1].substring(0, 2);
             } else {
-                // More than 2 names: first name + middle initial + last name initial
                 base = parts[0].substring(0, 3) + parts[1].charAt(0) + parts[parts.length - 1].charAt(0);
             }
             
-            // Add random numbers at the end (2-4 digits)
             const randomNum = Math.floor(100 + Math.random() * 900);
             base = base + randomNum;
-            
-            // Pick random UPI provider
             const provider = upiProviders[Math.floor(Math.random() * upiProviders.length)];
             
             return base + provider;
@@ -276,7 +282,6 @@
         function updateAvatarAndUPI() {
             const name = nameInput.value.trim();
             
-            // Update Avatar
             if (name) {
                 const words = name.split(" ");
                 let initials = words[0].charAt(0).toUpperCase();
@@ -291,14 +296,15 @@
                 avatarBg.className = `w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold shadow-md transition-all duration-300 bg-slate-400`;
             }
             
-            // Generate and update UPI ID based on name
             const newUpi = generateUPIFromName(name);
             receiverUpi.value = newUpi;
         }
 
         nameInput.addEventListener('input', updateAvatarAndUPI);
 
+        // =============================================
         // 2. DATA MANAGEMENT
+        // =============================================
         const dropdownMenu = document.getElementById('bankDropdownMenu');
         const dropdownOverlay = document.getElementById('dropdownOverlay');
         const bankListContainer = document.getElementById('bankListContainer');
@@ -308,11 +314,9 @@
         const amountWrapper = document.getElementById('amountWrapper');
         const balanceWarning = document.getElementById('balanceWarning');
         
-        // Screens
         const paymentScreen = document.getElementById('paymentScreen');
         const receiptScreen = document.getElementById('receiptScreen');
 
-        // Receipt Fields
         const receiptName = document.getElementById('receiptName');
         const receiptAccount = document.getElementById('receiptAccount');
         const receiptDateTime = document.getElementById('receiptDateTime');
@@ -326,7 +330,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             initializeDefaultDataIfEmpty();
             loadActiveBankSelection();
-            updateAvatarAndUPI(); // Initialize UPI on load
+            updateAvatarAndUPI();
+            checkForScannedData();
         });
 
         function initializeDefaultDataIfEmpty() {
@@ -348,7 +353,78 @@
             }
         }
 
-        // 3. NUMPAD INTERACTION & REAL-TIME VALIDATION
+        // =============================================
+        // 3. QR SCANNED DATA HANDLER
+        // =============================================
+        function checkForScannedData() {
+            const scanData = localStorage.getItem('qrScanData');
+            if (scanData) {
+                try {
+                    const data = JSON.parse(scanData);
+                    
+                    // Show QR badge
+                    qrBadge.classList.remove('hidden');
+                    
+                    // Flash animation
+                    receiverCard.classList.add('qr-flash');
+                    setTimeout(() => receiverCard.classList.remove('qr-flash'), 800);
+                    
+                    // Update fields
+                    if (data.name && data.name.trim() !== '') {
+                        nameInput.value = data.name.trim();
+                    }
+                    
+                    if (data.upi && data.upi.trim() !== '') {
+                        receiverUpi.value = data.upi.trim();
+                    }
+                    
+                    // Update avatar
+                    updateAvatarAndUPI();
+                    
+                    // Show toast-like notification
+                    showNotification(`✅ QR Scanned: ${data.name || 'User'}`);
+                    
+                    // Clear the stored data after use
+                    localStorage.removeItem('qrScanData');
+                    
+                } catch (e) {
+                    console.error("Error parsing QR data:", e);
+                    localStorage.removeItem('qrScanData');
+                }
+            }
+            
+            // Check for URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('scanned') === 'true') {
+                // If scanned flag is set but no data, check again
+                const retryData = localStorage.getItem('qrScanData');
+                if (!retryData) {
+                    // Try to retrieve from session
+                    showNotification('📱 Please scan QR code again');
+                }
+            }
+        }
+
+        // =============================================
+        // 4. NOTIFICATION HELPER
+        // =============================================
+        function showNotification(message) {
+            // Create a floating notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-lg z-50 font-bold text-sm flex items-center gap-2 transition-all duration-500';
+            notification.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translate(-50%, -20px)';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // =============================================
+        // 5. NUMPAD INTERACTION & REAL-TIME VALIDATION
+        // =============================================
         function pressKey(key) {
             if (key === 'back') {
                 currentAmountString = currentAmountString.slice(0, -1);
@@ -361,18 +437,15 @@
                 if (currentAmountString === "0") {
                     currentAmountString = key;
                 } else {
-                    // Restrict to max 2 decimal spaces
                     if (currentAmountString.includes('.')) {
                         const decimals = currentAmountString.split('.')[1];
                         if (decimals.length >= 2) return;
                     }
-                    // Avoid abnormally high numbers for UI safety
                     if (parseFloat(currentAmountString + key) > 1000000) return;
                     currentAmountString += key;
                 }
             }
             
-            // Sync states
             amountDisplay.innerText = currentAmountString;
             amountInput.value = parseFloat(currentAmountString) || 0;
             validateLiveBalance();
@@ -389,7 +462,9 @@
             }
         }
 
-        // 4. BOTTOM SHEET ANIMATION CONTROL
+        // =============================================
+        // 6. BOTTOM SHEET ANIMATION CONTROL
+        // =============================================
         function openBankDropdown(e) {
             e.stopPropagation();
             dropdownOverlay.classList.remove('hidden');
@@ -436,7 +511,9 @@
             }
         }
 
-        // 5. TRANSACTION TRIGGER & RECEIPT GENERATOR + SOUND
+        // =============================================
+        // 7. TRANSACTION TRIGGER & RECEIPT GENERATOR + SOUND
+        // =============================================
         function handlePayment() {
             const amount = parseFloat(amountInput.value);
             const receiver = nameInput.value.trim();
@@ -466,19 +543,16 @@
                 return;
             }
 
-            // Execute deduction logic safely
             activeBankRecord.balance -= amount;
             savedBanks[bankIndex] = activeBankRecord;
             localStorage.setItem('savedUserBanks', JSON.stringify(savedBanks));
             
             currentSelectedBank = activeBankRecord;
 
-            // Generate Dynamic Data for Receipt
             const now = new Date();
             const formattedDate = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
             const randomRef = Math.floor(100000000000 + Math.random() * 900000000000);
 
-            // Update Receipt UI fields
             receiptName.innerText = receiver || "Unknown Recipient";
             receiptAccount.innerText = upiId || "---";
             receiptDateTime.innerText = formattedDate;
@@ -486,22 +560,21 @@
             receiptAmount.innerText = `₹${amount.toFixed(2)}`;
             receiptTotal.innerText = `₹${amount.toFixed(2)}`;
 
-            // Play success sound
             const audio = document.getElementById('successAudio');
             if (audio) {
                 audio.currentTime = 0;
                 audio.play().catch(e => console.warn("Audio play failed:", e));
             }
 
-            // Log transaction to history
             logTransaction(receiver, upiId, amount, formattedDate, randomRef, 'success', currentSelectedBank.name);
 
-            // Switch Screen View
             paymentScreen.classList.add('hidden');
             receiptScreen.classList.remove('hidden');
         }
 
-        // 6. DISMISS RECEIPT PAGE
+        // =============================================
+        // 8. DISMISS RECEIPT PAGE
+        // =============================================
         function dismissReceipt() {
             currentAmountString = "0";
             amountDisplay.innerText = "0";
@@ -512,7 +585,9 @@
             paymentScreen.classList.remove('hidden');
         }
 
-        // 7. TRANSACTION HISTORY LOGGER
+        // =============================================
+        // 9. TRANSACTION HISTORY LOGGER
+        // =============================================
         function logTransaction(name, upi, amount, date, ref, status, bankName) {
             let history = JSON.parse(localStorage.getItem('upi_tx_history')) || [];
             const newTx = {
@@ -527,6 +602,32 @@
             history.unshift(newTx); 
             localStorage.setItem('upi_tx_history', JSON.stringify(history));
         }
+
+        // =============================================
+        // 10. SCAN BUTTON ON SEND PAGE (Opens Scanner)
+        // =============================================
+        // Add scan button to header if needed - we already have it on index.html
+        // But we can also add a scan button here for convenience
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add scan button to header
+            const header = document.querySelector('header');
+            if (header) {
+                const scanBtn = document.createElement('button');
+                scanBtn.className = 'w-10 h-10 flex items-center justify-center text-blue-600 rounded-full hover:bg-blue-50 active-scale transition-all';
+                scanBtn.innerHTML = '<i class="fa-solid fa-qrcode text-lg"></i>';
+                scanBtn.onclick = () => {
+                    // Store flag and redirect to index for scanning
+                    localStorage.setItem('openScanner', 'true');
+                    window.location.href = 'index.html';
+                };
+                // Insert after back button
+                const backBtn = header.querySelector('a');
+                if (backBtn) {
+                    backBtn.after(scanBtn);
+                }
+            }
+        });
+
     </script>
 </body>
 </html>
