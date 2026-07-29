@@ -21,7 +21,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Custom Swiper Pagination styling to look premium */
         .swiper-pagination-bullet {
             background: #cbd5e1 !important;
             opacity: 1 !important;
@@ -41,7 +40,6 @@
             bottom: 6px !important;
         }
 
-        /* Soft Scale animation on click */
         .active-scale:active {
             transform: scale(0.96);
         }
@@ -54,10 +52,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.92);
             z-index: 9999;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(4px);
         }
 
         .qr-modal.active {
@@ -66,41 +65,45 @@
 
         .qr-container {
             background: white;
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 400px;
-            width: 90%;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 420px;
+            width: 92%;
             position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         #qr-reader {
             width: 100%;
             max-width: 400px;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
+            background: #000;
         }
 
         #qr-reader video {
-            border-radius: 12px;
+            border-radius: 16px;
+            width: 100%;
         }
 
         .qr-close-btn {
             position: absolute;
-            top: -12px;
-            right: -12px;
+            top: -14px;
+            right: -14px;
             background: #ff4444;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
+            width: 44px;
+            height: 44px;
+            font-size: 22px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 16px rgba(255, 68, 68, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
+            z-index: 10;
         }
 
         .qr-close-btn:hover {
@@ -110,10 +113,132 @@
 
         .qr-status {
             text-align: center;
-            margin-top: 12px;
+            margin-top: 14px;
             font-size: 14px;
             font-weight: 600;
             color: #333;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 12px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .qr-status.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .qr-status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .qr-status .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #162a5b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Flash animation for QR detected */
+        @keyframes qrFlash {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.3);
+            }
+        }
+
+        .qr-flash {
+            animation: qrFlash 0.6s ease-in-out;
+        }
+
+        /* Manual entry section */
+        .manual-entry {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .manual-entry input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-size: 14px;
+            font-weight: 500;
+            transition: border 0.3s;
+        }
+
+        .manual-entry input:focus {
+            border-color: #162a5b;
+            outline: none;
+        }
+
+        .manual-entry button {
+            padding: 10px 18px;
+            border-radius: 12px;
+            border: none;
+            background: #162a5b;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .manual-entry button:hover {
+            background: #1f3b7d;
+        }
+
+        .manual-entry button:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 480px) {
+            .qr-container {
+                padding: 16px;
+            }
+
+            .qr-close-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+                top: -10px;
+                right: -10px;
+            }
+
+            .manual-entry input {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .manual-entry button {
+                font-size: 12px;
+                padding: 8px 14px;
+            }
         }
     </style>
 </head>
@@ -128,7 +253,6 @@
         <header
             class="p-4 flex justify-between items-center bg-white sticky top-0 z-40 shadow-sm border-b border-gray-100">
             <div class="flex items-center gap-3">
-                <!-- User Profile Badge -->
                 <a href="profile.html"
                     class="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-400 to-slate-200 flex items-center justify-center text-gray-800 font-extrabold text-lg border border-white shadow-sm active-scale cursor-pointer">
                     RB
@@ -142,7 +266,6 @@
                     </p>
                 </div>
             </div>
-            <!-- Notifications & Rewards -->
             <div class="flex items-center gap-4">
                 <button
                     class="flex items-center gap-1 text-sm font-bold text-[#162a5b] bg-slate-50 px-2.5 py-1.5 rounded-full active-scale">
@@ -159,19 +282,18 @@
         <!-- APP SCROLLABLE DYNAMIC BODY -->
         <main class="flex-1">
 
-            <!-- 4-BANNER LOOP CAROUSEL (SWIPER) -->
+            <!-- 4-BANNER LOOP CAROUSEL -->
             <div class="px-4 mt-4 relative">
                 <div class="swiper mainPromoSwiper rounded-3xl overflow-hidden pb-7">
                     <div class="swiper-wrapper">
-
-                        <!-- Banner 1: RuPay Credit Card -->
                         <div
                             class="swiper-slide bg-gradient-to-r from-[#e0f2fe] to-[#e0e7ff] p-5 rounded-3xl border border-blue-100 flex justify-between items-center h-36">
                             <div class="max-w-[65%]">
                                 <h3 class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Special Feature
                                 </h3>
                                 <h2 class="text-base font-black text-[#162a5b] leading-tight my-1">RuPay Credit card
-                                    <span class="font-normal text-xs block text-gray-500">only on BHIM UPI</span></h2>
+                                    <span class="font-normal text-xs block text-gray-500">only on BHIM UPI</span>
+                                </h2>
                                 <button
                                     class="mt-2.5 bg-[#162a5b] text-white text-[10px] font-bold px-4 py-2 rounded-full shadow-md active-scale">Learn
                                     more</button>
@@ -181,8 +303,6 @@
                                     class="fa-solid fa-credit-card text-5xl text-blue-600 opacity-90 transform rotate-12"></i>
                             </div>
                         </div>
-
-                        <!-- Banner 2: Flat Bill Cashback -->
                         <div
                             class="swiper-slide bg-gradient-to-r from-[#fef3c7] to-[#fde68a] p-5 rounded-3xl border border-amber-200 flex justify-between items-center h-36">
                             <div class="max-w-[65%]">
@@ -190,7 +310,8 @@
                                 </h3>
                                 <h2 class="text-base font-black text-amber-950 leading-tight my-1">Get up to ₹150 Back
                                     <span class="font-normal text-xs block text-amber-800">on Electricity & Gas
-                                        bills</span></h2>
+                                        bills</span>
+                                </h2>
                                 <button
                                     class="mt-2.5 bg-amber-900 text-white text-[10px] font-bold px-4 py-2 rounded-full shadow-md active-scale">Pay
                                     Bills</button>
@@ -199,8 +320,6 @@
                                 <i class="fa-solid fa-gift text-5xl text-amber-600 opacity-90"></i>
                             </div>
                         </div>
-
-                        <!-- Banner 3: Travel Booking Zero Fees -->
                         <div
                             class="swiper-slide bg-gradient-to-r from-[#dcfce7] to-[#bbf7d0] p-5 rounded-3xl border border-emerald-200 flex justify-between items-center h-36">
                             <div class="max-w-[65%]">
@@ -217,8 +336,6 @@
                                 <i class="fa-solid fa-plane text-5xl text-emerald-600 opacity-90 -rotate-12"></i>
                             </div>
                         </div>
-
-                        <!-- Banner 4: Secure Biometric Pay -->
                         <div
                             class="swiper-slide bg-gradient-to-r from-[#f5f3ff] to-[#edd1ff] p-5 rounded-3xl border border-purple-200 flex justify-between items-center h-36">
                             <div class="max-w-[65%]">
@@ -226,7 +343,8 @@
                                 </h3>
                                 <h2 class="text-base font-black text-purple-950 leading-tight my-1">Enable App Lock
                                     <span class="font-normal text-xs block text-purple-700">for advanced device
-                                        safety</span></h2>
+                                        safety</span>
+                                </h2>
                                 <button
                                     class="mt-2.5 bg-purple-800 text-white text-[10px] font-bold px-4 py-2 rounded-full shadow-md active-scale">Secure
                                     App</button>
@@ -235,20 +353,16 @@
                                 <i class="fa-solid fa-shield-halved text-5xl text-purple-600 opacity-90"></i>
                             </div>
                         </div>
-
                     </div>
-                    <!-- Premium Carousel Dots Indicator -->
                     <div class="swiper-pagination"></div>
                 </div>
             </div>
 
-            <!-- PAY NOW MAIN ACTION GRID (LARGE LOGO ICONS) -->
+            <!-- PAY NOW MAIN ACTION GRID -->
             <div class="px-4 mt-2">
                 <h4 class="text-xs font-black text-gray-400 tracking-widest mb-3 uppercase">PAY NOW</h4>
                 <div
                     class="bg-white rounded-[32px] p-5 shadow-sm grid grid-cols-4 gap-y-6 gap-x-2 text-center border border-slate-100">
-
-                    <!-- Icon 1 -->
                     <a href="send.html" class="flex flex-col items-center cursor-pointer active-scale group">
                         <div
                             class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
@@ -256,8 +370,6 @@
                         </div>
                         <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Send to Mobile/ UPI</span>
                     </a>
-
-                    <!-- Icon 2 -->
                     <div class="flex flex-col items-center cursor-pointer relative active-scale group">
                         <span
                             class="absolute -top-2 bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wide z-10">New</span>
@@ -267,8 +379,6 @@
                         </div>
                         <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Send To Bank</span>
                     </div>
-
-                    <!-- Icon 3 -->
                     <div class="flex flex-col items-center cursor-pointer active-scale group">
                         <div
                             class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
@@ -276,8 +386,6 @@
                         </div>
                         <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Approve To Pay</span>
                     </div>
-
-                    <!-- Icon 4 -->
                     <div class="flex flex-col items-center cursor-pointer relative active-scale group">
                         <span
                             class="absolute -top-2 bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wide z-10">New</span>
@@ -287,7 +395,6 @@
                         </div>
                         <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">My QR Code</span>
                     </div>
-
                     <a href="check-balance.html" class="flex flex-col items-center cursor-pointer active-scale group">
                         <div
                             class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
@@ -295,8 +402,6 @@
                         </div>
                         <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Check Balance</span>
                     </a>
-
-                    <!-- Icon 6 -->
                     <div class="flex flex-col items-center cursor-pointer active-scale group">
                         <div
                             class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
@@ -304,8 +409,6 @@
                         </div>
                         <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Request Money</span>
                     </div>
-
-                    <!-- Icon 7 -->
                     <div class="flex flex-col items-center cursor-pointer active-scale group">
                         <div
                             class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
@@ -313,8 +416,6 @@
                         </div>
                         <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Self Transfer</span>
                     </div>
-
-                    <!-- Icon 8 -->
                     <a href="history.html" class="flex flex-col items-center cursor-pointer active-scale group">
                         <div
                             class="w-14 h-14 rounded-full bg-[#162a5b] flex items-center justify-center text-amber-400 mb-2 shadow-md transition-all duration-300 group-hover:bg-[#1f3b7d]">
@@ -322,13 +423,11 @@
                         </div>
                         <span class="text-[11px] font-extrabold text-[#1a2e63] leading-tight">Transaction History</span>
                     </a>
-
                 </div>
             </div>
 
             <!-- BALANCE & CARDS ACCOUNT GRID -->
             <div class="px-4 mt-5 grid grid-cols-2 gap-3">
-                <!-- Card A: UPI Lite Info -->
                 <div
                     class="bg-[#fde047] bg-opacity-35 p-3.5 rounded-2xl border border-amber-200 flex flex-col justify-between relative cursor-pointer shadow-sm active-scale">
                     <div class="flex items-start justify-between">
@@ -340,7 +439,8 @@
                         </div>
                         <div
                             class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#162a5b] shadow-sm">
-                            <i class="fa-solid fa-bolt text-xs"></i></div>
+                            <i class="fa-solid fa-bolt text-xs"></i>
+                        </div>
                     </div>
                     <button
                         class="mt-4 w-full bg-[#162a5b] text-white text-xs font-bold py-2 rounded-full shadow-sm active-scale">Top
@@ -348,7 +448,6 @@
                     <i
                         class="fa-solid fa-chevron-right text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 text-xs"></i>
                 </div>
-                <!-- Card B: Credit Card Manager -->
                 <div
                     class="bg-[#fde047] bg-opacity-35 p-3.5 rounded-2xl border border-amber-200 flex flex-col justify-between relative cursor-pointer shadow-sm active-scale">
                     <div class="flex items-start justify-between">
@@ -358,7 +457,8 @@
                         </div>
                         <div
                             class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#162a5b] shadow-sm">
-                            <i class="fa-solid fa-credit-card text-xs"></i></div>
+                            <i class="fa-solid fa-credit-card text-xs"></i>
+                        </div>
                     </div>
                     <button
                         class="mt-4 w-full bg-[#162a5b] text-white text-xs font-bold py-2 rounded-full shadow-sm active-scale">Manage</button>
@@ -367,7 +467,7 @@
                 </div>
             </div>
 
-            <!-- UNSETTLED RED ALERT BAR (With Real Functionality) -->
+            <!-- UNSETTLED RED ALERT BAR -->
             <div id="unsettledAlertBar" class="px-4 mt-4 transition-all duration-500 ease-in-out">
                 <div class="bg-[#eb5757] text-white px-4 py-3 rounded-2xl flex justify-between items-center shadow-md">
                     <div class="flex items-center gap-2.5 text-sm font-bold">
@@ -382,14 +482,15 @@
                 </div>
             </div>
 
-            <!-- SET UP MANDATES GREEN BAR (Removable Frame) -->
+            <!-- SET UP MANDATES GREEN BAR -->
             <div id="mandateBannerFrame" class="px-4 mt-4 transition-all duration-500 ease-in-out">
                 <div
                     class="bg-[#bbf7d0] text-emerald-950 px-4 py-3 rounded-2xl flex justify-between items-center relative shadow-sm border border-emerald-200">
                     <div class="flex items-center gap-3">
                         <div
                             class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-emerald-700 shadow-sm">
-                            <i class="fa-solid fa-file-invoice text-base"></i></div>
+                            <i class="fa-solid fa-file-invoice text-base"></i>
+                        </div>
                         <div>
                             <p class="text-xs font-black leading-tight text-emerald-900">Never miss a payment of your
                                 bills.</p>
@@ -414,91 +515,99 @@
                             class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"></i>
                     </button>
                 </div>
-
-                <!-- Core Group -->
                 <div class="grid grid-cols-4 gap-2 text-center">
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-bolt"></i></div>
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Electricity</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-tag"></i></div>
+                            <i class="fa-solid fa-tag"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">FASTag</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-handshake"></i></div>
+                            <i class="fa-solid fa-handshake"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Loan</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-mobile-button"></i></div>
+                            <i class="fa-solid fa-mobile-button"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Postpaid</span>
                     </div>
                 </div>
-
-                <!-- Expanded Group (Collapsible via JS) -->
                 <div id="extendedUtilityGrid"
                     class="hidden grid grid-cols-4 gap-2 text-center mt-3 pt-3 border-t border-dashed border-gray-200 transition-all duration-500">
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-tv"></i></div>
+                            <i class="fa-solid fa-tv"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">DTH</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-fire-burner"></i></div>
+                            <i class="fa-solid fa-fire-burner"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Piped Gas</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-droplet"></i></div>
+                            <i class="fa-solid fa-droplet"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Water</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-wifi"></i></div>
+                            <i class="fa-solid fa-wifi"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Broadband</span>
                     </div>
                 </div>
             </div>
 
-            <!-- PREMIUM INSURANCE & INVESTMENTS SECTION -->
+            <!-- INSURANCE & INVESTMENTS SECTION -->
             <div class="px-4 mt-6">
                 <h4 class="text-xs font-black text-gray-400 tracking-widest uppercase mb-3">INSURANCE & INVESTMENTS</h4>
                 <div class="grid grid-cols-4 gap-2 text-center">
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-car-burst"></i></div>
+                            <i class="fa-solid fa-car-burst"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Motor Ins.</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-heart-pulse"></i></div>
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Health Ins.</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-chart-line"></i></div>
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Mutual Funds</span>
                     </div>
                     <div class="flex flex-col items-center cursor-pointer active-scale">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#162a5b] mb-1.5 shadow-sm text-2xl">
-                            <i class="fa-solid fa-coins"></i></div>
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
                         <span class="text-[11px] font-bold text-gray-600">Digi Gold</span>
                     </div>
                 </div>
@@ -521,21 +630,18 @@
 
         </main>
 
-        <!-- FLOATING BOTTOM SMART SYSTEM CONTROLS (FIXED POSITION) -->
+        <!-- FLOATING BOTTOM SMART SYSTEM CONTROLS -->
         <div
             class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[88%] max-w-[370px] bg-[#12234e] rounded-full py-2.5 px-4 flex justify-between items-center shadow-2xl text-white z-50 border border-slate-800">
-            <!-- Tap Interface -->
             <button class="flex flex-col items-center flex-1 py-1 active-scale">
                 <i class="fa-solid fa-hand-pointer text-lg text-amber-400 mb-0.5"></i>
                 <span class="text-xs font-bold tracking-wide">Tap</span>
             </button>
-            <!-- Core QR Scanner (Highlighted Unit) - Now opens scanner -->
             <button onclick="openQRScanner()"
                 class="flex flex-col items-center flex-1 py-1 bg-[#1a2e63] rounded-full border border-blue-900 shadow-xl transform -translate-y-2 scale-105 active-scale transition-all">
                 <i class="fa-solid fa-qrcode text-xl text-amber-400 mb-0.5"></i>
                 <span class="text-xs font-black tracking-wide">Scan</span>
             </button>
-            <!-- Voice Interface -->
             <button class="flex flex-col items-center flex-1 py-1 active-scale">
                 <i class="fa-solid fa-microphone text-lg text-amber-400 mb-0.5"></i>
                 <span class="text-xs font-bold tracking-wide">Voice</span>
@@ -549,19 +655,298 @@
         <div class="qr-container">
             <button class="qr-close-btn" onclick="closeQRScanner()">✕</button>
             <div id="qr-reader"></div>
-            <div id="qr-status" class="qr-status">📷 Point camera at QR code</div>
+            <div id="qr-status" class="qr-status">
+                <span class="spinner"></span> Initializing camera...
+            </div>
+            <div class="manual-entry">
+                <input type="text" id="manualUpiInput" placeholder="Or enter UPI ID / Name manually">
+                <button onclick="manualSubmit()">Go</button>
+            </div>
         </div>
     </div>
 
     <!-- Swiper Core Component JS Logic -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-
-        // QR Scanner Variables
+        // =============================================
+        // QR SCANNER - Improved Name Extraction
+        // =============================================
         let html5QrCode = null;
         let isScanning = false;
 
-        // जब भी होम पेज लोड होगा, यह लोकल स्टोरेज से नाम चेक करके बदल देगा
+        function openQRScanner() {
+            const modal = document.getElementById('qrModal');
+            modal.classList.add('active');
+
+            const statusEl = document.getElementById('qr-status');
+            statusEl.className = 'qr-status';
+            statusEl.innerHTML = '<span class="spinner"></span> Initializing camera...';
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                statusEl.className = 'qr-status error';
+                statusEl.innerHTML = '❌ Camera not supported on this device';
+                return;
+            }
+
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
+            }
+
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            };
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                onScanSuccess,
+                onScanError
+            ).then(() => {
+                isScanning = true;
+                statusEl.className = 'qr-status';
+                statusEl.innerHTML = '📷 Point camera at QR code';
+            }).catch((err) => {
+                statusEl.className = 'qr-status error';
+                statusEl.innerHTML = '❌ Camera access denied. Please allow camera permissions.';
+                console.error("QR Scanner Error:", err);
+            });
+        }
+
+        function closeQRScanner() {
+            const modal = document.getElementById('qrModal');
+            modal.classList.remove('active');
+
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    isScanning = false;
+                }).catch(err => console.error("Error stopping scanner:", err));
+            }
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    isScanning = false;
+                }).catch(err => console.error("Error stopping scanner:", err));
+            }
+
+            const statusEl = document.getElementById('qr-status');
+            statusEl.className = 'qr-status success';
+            statusEl.innerHTML = '✅ QR Code detected! Processing...';
+
+            // Parse and extract name
+            const result = extractQRData(decodedText);
+
+            if (result) {
+                localStorage.setItem('qrScanData', JSON.stringify(result));
+                setTimeout(() => {
+                    closeQRScanner();
+                    window.location.href = 'send.html?scanned=true';
+                }, 400);
+            } else {
+                statusEl.className = 'qr-status error';
+                statusEl.innerHTML = '❌ Could not read QR data. Try manual entry.';
+                setTimeout(() => {
+                    closeQRScanner();
+                }, 2000);
+            }
+        }
+
+        function onScanError(errorMessage) {
+            // Ignore frequent scan errors
+        }
+
+        // =============================================
+        // IMPROVED QR DATA EXTRACTION
+        // =============================================
+        function extractQRData(decodedText) {
+            console.log("Raw QR Data:", decodedText);
+
+            let name = '';
+            let upi = '';
+
+            // Method 1: UPI URL Format
+            // Format: upi://pay?pa=xxx@upi&pn=Payee%20Name&am=100.00
+            if (decodedText.includes('upi://')) {
+                try {
+                    const url = new URL(decodedText);
+                    const params = new URLSearchParams(url.search);
+
+                    // Get payee name (pn parameter)
+                    name = params.get('pn') || '';
+                    // Decode URL encoded name
+                    if (name) {
+                        name = decodeURIComponent(name);
+                    }
+
+                    // Get payee address (pa parameter) - UPI ID
+                    upi = params.get('pa') || '';
+
+                    console.log("UPI URL parsed - Name:", name, "UPI:", upi);
+                } catch (e) {
+                    console.error("Error parsing UPI URL:", e);
+                }
+            }
+
+            // Method 2: JSON Format
+            if (!name) {
+                try {
+                    const jsonData = JSON.parse(decodedText);
+                    name = jsonData.name || jsonData.payeeName || jsonData.displayName || jsonData.payee || '';
+                    upi = jsonData.upi || jsonData.upiId || jsonData.vpa || jsonData.account || jsonData.payeeAddress || '';
+                    console.log("JSON parsed - Name:", name, "UPI:", upi);
+                } catch (e) {
+                    // Not JSON
+                }
+            }
+
+            // Method 3: Extract UPI ID pattern and derive name from it
+            if (!upi) {
+                const upiPattern = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+)/;
+                const match = decodedText.match(upiPattern);
+                if (match) {
+                    upi = match[1];
+                    // Try to get name from UPI ID
+                    const namePart = upi.split('@')[0] || '';
+                    if (namePart) {
+                        // Clean up the name part
+                        name = namePart.replace(/[0-9]/g, ' ').trim();
+                        // Capitalize each word
+                        name = name.split(' ').map(word =>
+                            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                        ).join(' ');
+                        if (!name) name = namePart;
+                    }
+                    console.log("UPI pattern found - Name:", name, "UPI:", upi);
+                }
+            }
+
+            // Method 4: Try to find name in the text using common patterns
+            if (!name) {
+                // Look for name patterns like "Name: John Doe" or "payee=John Doe"
+                const namePatterns = [
+                    /name[:\s]+([a-zA-Z\s]{2,30})/i,
+                    /payee[:\s]+([a-zA-Z\s]{2,30})/i,
+                    /recipient[:\s]+([a-zA-Z\s]{2,30})/i,
+                    /to[:\s]+([a-zA-Z\s]{2,30})/i
+                ];
+                for (const pattern of namePatterns) {
+                    const match = decodedText.match(pattern);
+                    if (match) {
+                        name = match[1].trim();
+                        break;
+                    }
+                }
+            }
+
+            // Method 5: If still no name, use the first 30 chars of decoded text
+            if (!name) {
+                // Clean the text: remove special chars, keep only letters and spaces
+                let cleanText = decodedText.replace(/[^a-zA-Z\s]/g, ' ').trim();
+                // Take first 2-3 words
+                const words = cleanText.split(/\s+/).filter(w => w.length > 1);
+                if (words.length > 0) {
+                    name = words.slice(0, 3).join(' ');
+                    if (name.length > 30) name = name.substring(0, 30);
+                } else {
+                    name = 'Unknown User';
+                }
+                console.log("Fallback name:", name);
+            }
+
+            // Clean up name: remove extra spaces, capitalize properly
+            if (name) {
+                name = name.replace(/\s+/g, ' ').trim();
+                // Capitalize first letter of each word
+                name = name.split(' ').map(word =>
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                ).join(' ');
+            }
+
+            // If UPI is still empty, generate a default one
+            if (!upi) {
+                const cleanName = name.replace(/\s+/g, '').toLowerCase();
+                const providers = ['@paytm', '@googlepay', '@phonepe', '@upi', '@nsdl'];
+                upi = (cleanName || 'user') + providers[Math.floor(Math.random() * providers.length)];
+                console.log("Generated UPI:", upi);
+            }
+
+            // Final validation
+            if (!name || name.trim() === '') {
+                name = 'Unknown User';
+            }
+
+            const result = {
+                name: name.trim(),
+                upi: upi.trim(),
+                raw: decodedText,
+                timestamp: new Date().toISOString()
+            };
+
+            console.log("Final QR extracted data:", result);
+            return result;
+        }
+
+        // =============================================
+        // MANUAL ENTRY SUBMIT
+        // =============================================
+        function manualSubmit() {
+            const input = document.getElementById('manualUpiInput');
+            const value = input.value.trim();
+
+            if (!value) {
+                alert('Please enter a UPI ID or name');
+                return;
+            }
+
+            let name = '';
+            let upi = '';
+
+            // Check if it's a UPI ID format
+            if (value.includes('@')) {
+                upi = value;
+                const namePart = value.split('@')[0] || '';
+                name = namePart.replace(/[0-9]/g, ' ').trim();
+                name = name.split(' ').map(w =>
+                    w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+                ).join(' ');
+                if (!name) name = namePart || 'User';
+            } else {
+                // Treat as name
+                name = value;
+                const cleanName = name.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
+                const parts = cleanName.split(/\s+/);
+                let base = '';
+                if (parts.length === 1) {
+                    base = parts[0].substring(0, 6);
+                    if (base.length < 3) base = base + 'user';
+                } else if (parts.length === 2) {
+                    base = parts[0].substring(0, 4) + parts[1].substring(0, 2);
+                } else {
+                    base = parts[0].substring(0, 3) + parts[1].charAt(0) + parts[parts.length - 1].charAt(0);
+                }
+                const randomNum = Math.floor(100 + Math.random() * 900);
+                const providers = ['@paytm', '@googlepay', '@phonepe', '@amazonpay', '@upi', '@nsdl'];
+                upi = base + randomNum + providers[Math.floor(Math.random() * providers.length)];
+            }
+
+            const scanData = {
+                name: name || 'User',
+                upi: upi || 'user@upi',
+                raw: value,
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('qrScanData', JSON.stringify(scanData));
+            closeQRScanner();
+            window.location.href = 'send.html?scanned=true';
+        }
+
+        // =============================================
+        // OTHER FUNCTIONS
+        // =============================================
         document.addEventListener("DOMContentLoaded", () => {
             const savedName = localStorage.getItem("upiUserName");
             if (savedName) {
@@ -570,39 +955,21 @@
                     homeNameEl.innerText = savedName;
                 }
             }
-
-            // Check if we need to resume scanning (if scanner was open)
-            const shouldResumeScan = localStorage.getItem('resumeScan');
-            if (shouldResumeScan === 'true') {
-                localStorage.removeItem('resumeScan');
-                setTimeout(() => openQRScanner(), 500);
-            }
         });
 
-        // Initialize Core 4-Banner Automatic Carousel Engine
         var swiper = new Swiper(".mainPromoSwiper", {
             loop: true,
-            autoplay: {
-                delay: 3000,
-                disableOnInteraction: false
-            },
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true
-            },
+            autoplay: { delay: 3000, disableOnInteraction: false },
+            pagination: { el: ".swiper-pagination", clickable: true },
         });
 
-        // 1. DISMISS FUNCTION FOR SET UP MANDATE BAR
         function closeMandateBanner() {
             const banner = document.getElementById('mandateBannerFrame');
             banner.style.opacity = '0';
             banner.style.transform = 'translateY(-10px)';
-            setTimeout(() => {
-                banner.remove(); // Completely removes frame layout from hierarchy
-            }, 500);
+            setTimeout(() => banner.remove(), 500);
         }
 
-        // 2. LIVE SETTLEMENT UTILITY ENGINE FOR RED UNSETTLED BAR
         function settleBalanceAmount() {
             const spinner = document.getElementById('refreshSpinner');
             const amountText = document.getElementById('unsettledAmount');
@@ -611,36 +978,29 @@
             const upiLiteDisplay = document.getElementById('upiLiteDisplay');
             const settleIcon = document.getElementById('settleIcon');
 
-            // Start processing spinner state
             spinner.classList.add('animate-spin');
             settleText.innerText = "Settling your balance...";
 
             setTimeout(() => {
-                // Update text configurations to success state
                 spinner.classList.remove('animate-spin');
                 settleIcon.className = "fa-solid fa-circle-check text-base";
                 alertBar.firstElementChild.className = "bg-emerald-600 text-white px-4 py-3 rounded-2xl flex justify-between items-center shadow-md transition-all";
                 settleText.innerText = "Successfully Settled!";
                 amountText.innerText = "₹0";
-
-                // Update Main Balance State from 500 to 640 (500 + 140)
                 upiLiteDisplay.innerText = "₹640";
                 upiLiteDisplay.classList.add('text-emerald-600', 'scale-110');
 
-                // Gracefully slide out and clean up from UI view
                 setTimeout(() => {
                     alertBar.style.opacity = '0';
                     alertBar.style.height = '0px';
                     alertBar.style.overflow = 'hidden';
                     alertBar.style.marginTop = '0px';
                     upiLiteDisplay.classList.remove('text-emerald-600', 'scale-110');
-                    setTimeout(() => { alertBar.remove(); }, 500);
+                    setTimeout(() => alertBar.remove(), 500);
                 }, 1500);
-
-            }, 1200); // Trigger settlement inside a mock time of 1.2s
+            }, 1200);
         }
 
-        // 3. UTILITY EXPANDABLE GRID (VIEW ALL BUTTON CONTROL)
         const utilityBtn = document.getElementById('utilityViewAllBtn');
         const extendedGrid = document.getElementById('extendedUtilityGrid');
         const utilityBtnText = document.getElementById('utilityBtnText');
@@ -658,201 +1018,9 @@
             }
         });
 
-        // =============================================
-        // QR SCANNER FUNCTIONS
-        // =============================================
-
-        function openQRScanner() {
-            const modal = document.getElementById('qrModal');
-            modal.classList.add('active');
-            
-            const statusEl = document.getElementById('qr-status');
-            statusEl.textContent = '📷 Initializing camera...';
-            
-            // Check if camera is available
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                statusEl.textContent = '❌ Camera not supported on this device';
-                return;
-            }
-
-            // Create scanner instance
-            if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode("qr-reader");
-            }
-
-            const config = {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0
-            };
-
-            // Start scanning
-            html5QrCode.start(
-                { facingMode: "environment" },
-                config,
-                onScanSuccess,
-                onScanError
-            ).then(() => {
-                isScanning = true;
-                statusEl.textContent = '📷 Point camera at QR code';
-            }).catch((err) => {
-                statusEl.textContent = '❌ Camera access denied. Please allow camera permissions.';
-                console.error("QR Scanner Error:", err);
-            });
-        }
-
-        function closeQRScanner() {
-            const modal = document.getElementById('qrModal');
-            modal.classList.remove('active');
-            
-            if (html5QrCode && isScanning) {
-                html5QrCode.stop().then(() => {
-                    isScanning = false;
-                    console.log("QR Scanner stopped.");
-                }).catch(err => {
-                    console.error("Error stopping scanner:", err);
-                });
-            }
-
-            // Clear status
-            document.getElementById('qr-status').textContent = '📷 Point camera at QR code';
-        }
-
-        function onScanSuccess(decodedText, decodedResult) {
-            // Stop scanning immediately
-            if (html5QrCode && isScanning) {
-                html5QrCode.stop().then(() => {
-                    isScanning = false;
-                    console.log("QR Scan successful, stopped scanner.");
-                }).catch(err => console.error("Error stopping scanner:", err));
-            }
-
-            // Update status
-            const statusEl = document.getElementById('qr-status');
-            statusEl.textContent = '✅ QR Code detected! Redirecting...';
-
-            // Parse the QR data
-            try {
-                // Try to parse as JSON first (for structured data)
-                let qrData = null;
-                try {
-                    qrData = JSON.parse(decodedText);
-                } catch (e) {
-                    // If not JSON, treat as plain text with UPI format
-                    qrData = { raw: decodedText };
-                }
-
-                // Extract name and UPI from QR data
-                let name = '';
-                let upi = '';
-
-                // Check for UPI format: "upi://pay?pa=...&pn=..."
-                if (decodedText.includes('upi://')) {
-                    const upiParams = new URLSearchParams(decodedText.split('?')[1]);
-                    upi = upiParams.get('pa') || upiParams.get('pn') || '';
-                    name = upiParams.get('pn') || upiParams.get('name') || '';
-                    
-                    // If name is empty, try to extract from UPI
-                    if (!name && upi) {
-                        name = upi.split('@')[0] || 'User';
-                        name = name.replace(/[0-9]/g, '').trim() || 'User';
-                        name = name.charAt(0).toUpperCase() + name.slice(1);
-                    }
-                } 
-                // Check for JSON structure
-                else if (qrData && typeof qrData === 'object') {
-                    name = qrData.name || qrData.payeeName || qrData.displayName || '';
-                    upi = qrData.upi || qrData.upiId || qrData.vpa || qrData.account || '';
-                }
-                // Fallback: try to parse as plain text
-                else {
-                    // Try to find UPI ID pattern
-                    const upiMatch = decodedText.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+)/);
-                    if (upiMatch) {
-                        upi = upiMatch[1];
-                        name = upi.split('@')[0] || 'User';
-                        name = name.replace(/[0-9]/g, '').trim() || 'User';
-                        name = name.charAt(0).toUpperCase() + name.slice(1);
-                    } else {
-                        // If no UPI pattern, use the whole text as name
-                        name = decodedText.substring(0, 30);
-                        upi = 'user@upi';
-                    }
-                }
-
-                // Store the scanned data in localStorage
-                const scanData = {
-                    name: name || 'Unknown User',
-                    upi: upi || 'user@upi',
-                    raw: decodedText,
-                    timestamp: new Date().toISOString()
-                };
-                localStorage.setItem('qrScanData', JSON.stringify(scanData));
-
-                // Close scanner
-                closeQRScanner();
-
-                // Redirect to send.html with data
-                setTimeout(() => {
-                    window.location.href = 'send.html?scanned=true';
-                }, 500);
-
-            } catch (error) {
-                console.error("QR Parse Error:", error);
-                statusEl.textContent = '❌ Error parsing QR data. Please try again.';
-                
-                // Still try to redirect with raw data
-                localStorage.setItem('qrScanData', JSON.stringify({
-                    raw: decodedText,
-                    name: 'Unknown User',
-                    upi: 'user@upi'
-                }));
-                
-                setTimeout(() => {
-                    closeQRScanner();
-                    window.location.href = 'send.html?scanned=true';
-                }, 1000);
-            }
-        }
-
-        function onScanError(errorMessage) {
-            // Ignore errors - this is called frequently during scanning
-            // Only log critical errors
-            if (errorMessage && errorMessage.includes('camera')) {
-                console.warn("Camera error:", errorMessage);
-                const statusEl = document.getElementById('qr-status');
-                if (statusEl && !statusEl.textContent.includes('✅')) {
-                    statusEl.textContent = '⚠️ Camera issue. Try again.';
-                }
-            }
-        }
-
-        // Handle page visibility change to resume scanner if needed
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && document.getElementById('qrModal').classList.contains('active')) {
-                // If modal is open but scanner stopped, restart it
-                if (!isScanning && html5QrCode) {
-                    openQRScanner();
-                }
-            }
-        });
-
-        // Close scanner on escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeQRScanner();
-            }
+            if (e.key === 'Escape') closeQRScanner();
         });
-
-        // Initialize QR scanner if returning from send.html
-        window.addEventListener('load', () => {
-            const shouldOpenScanner = localStorage.getItem('openScanner');
-            if (shouldOpenScanner === 'true') {
-                localStorage.removeItem('openScanner');
-                setTimeout(() => openQRScanner(), 300);
-            }
-        });
-
     </script>
 </body>
 
