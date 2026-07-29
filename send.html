@@ -4,49 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pay Securely - UPI</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        input:focus {
-            outline: none;
-        }
-        .active-scale:active {
-            transform: scale(0.95);
-        }
-        .bottom-sheet {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        /* QR Data flash animation */
+        input:focus { outline: none; }
+        .active-scale:active { transform: scale(0.95); }
+        .bottom-sheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
         @keyframes flashGreen {
             0% { background-color: transparent; }
             50% { background-color: rgba(34, 197, 94, 0.3); }
             100% { background-color: transparent; }
         }
-        .qr-flash {
-            animation: flashGreen 0.8s ease-in-out;
+        .qr-flash { animation: flashGreen 0.8s ease-in-out; }
+        
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
+        .qr-badge-show { animation: slideDown 0.5s ease-out; }
     </style>
 </head>
 <body class="bg-slate-900 md:bg-slate-200 flex justify-center items-center min-h-screen antialiased">
 
-    <!-- Mobile Device Frame Container -->
     <div class="w-full max-w-md bg-slate-50 min-h-screen shadow-2xl relative flex flex-col justify-between rounded-none md:rounded-[40px] md:min-h-[850px] md:max-h-[880px] border border-gray-100 overflow-hidden">
         
-        <!-- PAYMENT INTERFACE SCREEN -->
         <div id="paymentScreen" class="flex flex-col justify-between h-full flex-1">
-            <!-- TOP APP BAR -->
             <header class="p-4 flex justify-between items-center bg-white border-b border-gray-100">
                 <a href="index.html" class="w-10 h-10 flex items-center justify-center text-gray-700 rounded-full hover:bg-gray-50 active-scale transition-all">
                     <i class="fa-solid fa-arrow-left text-lg"></i>
@@ -54,22 +42,18 @@
                 <div class="flex flex-col items-center">
                     <span class="text-xs font-bold text-gray-400 tracking-wider uppercase">Send Money</span>
                 </div>
-                <button class="w-10 h-10 flex items-center justify-center text-gray-700 rounded-full hover:bg-gray-50 active-scale transition-all">
-                    <i class="fa-solid fa-ellipsis-vertical text-lg"></i>
+                <button onclick="openScannerFromSend()" class="w-10 h-10 flex items-center justify-center text-blue-600 rounded-full hover:bg-blue-50 active-scale transition-all">
+                    <i class="fa-solid fa-qrcode text-lg"></i>
                 </button>
             </header>
 
-            <!-- MAIN BODY CONTENT -->
             <main class="flex-1 flex flex-col items-center pt-8 px-6 relative">
                 
-                <!-- Receiver Profile Header Card -->
                 <div id="receiverCard" class="w-full bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center relative transition-all">
-                    <!-- Avatar -->
                     <div id="avatarBg" class="w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold shadow-inner transition-all duration-300 transform">
                         <span id="avatarInitials">AS</span>
                     </div>
                     
-                    <!-- Editable Details -->
                     <div class="text-center mt-3 w-full">
                         <div class="flex items-center justify-center gap-1.5 px-4">
                             <input type="text" id="receiverName" value="Adarsh Shukla" class="font-bold text-xl text-gray-800 text-center bg-transparent w-full border-b border-transparent hover:border-gray-200 focus:border-blue-500 pb-0.5 transition-all truncate" placeholder="Recipient Name">
@@ -82,13 +66,11 @@
                             </span>
                         </div>
                     </div>
-                    <!-- QR scanned badge -->
-                    <div id="qrBadge" class="hidden absolute -top-2 -right-2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <div id="qrBadge" class="hidden absolute -top-2 -right-2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1 qr-badge-show">
                         <i class="fa-solid fa-qrcode text-xs"></i> Scanned
                     </div>
                 </div>
 
-                <!-- Dynamic Amount Display Block -->
                 <div id="amountWrapper" class="mt-10 mb-4 text-center transition-all duration-300 p-4 rounded-2xl w-full">
                     <div class="flex items-center justify-center text-gray-800 font-semibold text-5xl tracking-tight">
                         <span class="text-3xl font-medium text-gray-400 mr-1">₹</span>
@@ -98,7 +80,6 @@
                     <p id="balanceWarning" class="text-xs text-red-500 font-semibold mt-2 opacity-0 transition-opacity">Insufficient account balance</p>
                 </div>
 
-                <!-- Contextual Note / Message Badge -->
                 <div class="w-full max-w-[240px]">
                     <div class="flex items-center bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm focus-within:border-blue-500 transition-all">
                         <i class="fa-regular fa-comment-dots text-gray-400 mr-2"></i>
@@ -108,10 +89,8 @@
 
             </main>
 
-            <!-- FOOTER & VIRTUAL KEYBOARD SECTION -->
             <footer class="bg-white border-t border-gray-100 rounded-t-[32px] shadow-[0_-8px_30px_rgb(0,0,0,0.04)] px-6 pt-4 pb-6 w-full flex flex-col gap-4">
                 
-                <!-- CURRENT ACC SELECTOR BAR -->
                 <div class="w-full flex justify-center">
                     <div onclick="openBankDropdown(event)" class="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer transition-all active-scale select-none">
                         <div class="flex items-center gap-3">
@@ -127,7 +106,6 @@
                     </div>
                 </div>
 
-                <!-- COMPACT CUSTOM MOBILE NUMPAD -->
                 <div class="grid grid-cols-3 gap-y-2 gap-x-4 my-2 text-center select-none">
                     <button onclick="pressKey('1')" class="py-3 text-xl font-bold text-slate-700 rounded-lg active:bg-slate-100 active-scale transition-all">1</button>
                     <button onclick="pressKey('2')" class="py-3 text-xl font-bold text-slate-700 rounded-lg active:bg-slate-100 active-scale transition-all">2</button>
@@ -145,13 +123,11 @@
                     </button>
                 </div>
 
-                <!-- PRIMARY PAY BUTTON -->
                 <button onclick="handlePayment()" class="w-full bg-[#0a52f6] text-white font-bold text-base py-4 rounded-xl shadow-lg shadow-blue-600/20 hover:bg-blue-700 active-scale transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-shield-halved text-sm"></i>
                     <span>Pay Securely</span>
                 </button>
 
-                <!-- UPI Brand Badge -->
                 <div class="flex items-center justify-center gap-1 opacity-40 grayscale hover:grayscale-0 transition-all mt-1">
                     <span class="text-[9px] font-bold tracking-widest text-slate-500 uppercase">Secured by</span>
                     <div class="flex items-center font-black text-xs italic tracking-tighter">
@@ -163,17 +139,12 @@
             </footer>
         </div>
 
-        <!-- SUCCESS RECEIPT SCREEN (Hidden by Default) -->
         <div id="receiptScreen" class="hidden flex-1 flex flex-col justify-between bg-white h-full p-6 overflow-y-auto">
             <div class="flex flex-col items-center pt-8 flex-1 justify-center">
-                <!-- Checkmark Icon -->
                 <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/20 mb-4 animate-bounce">
                     <i class="fa-solid fa-check text-white text-4xl"></i>
                 </div>
-                
                 <h2 class="text-xl font-bold text-slate-800 mb-8">Successful transfer</h2>
-
-                <!-- Receipt Table -->
                 <div class="w-full space-y-4 text-sm text-slate-600 px-2 max-w-sm">
                     <div class="flex justify-between items-start py-1">
                         <span class="text-slate-400 font-medium">Recipient Name</span>
@@ -191,9 +162,7 @@
                         <span class="text-slate-400 font-medium">Reference No.</span>
                         <span id="receiptRefNo" class="font-bold text-slate-800 text-right">---</span>
                     </div>
-                    
                     <hr class="border-gray-100 my-2">
-
                     <div class="flex justify-between items-center py-1">
                         <span class="text-slate-400 font-medium">Amount</span>
                         <span id="receiptAmount" class="font-bold text-slate-800">₹0.00</span>
@@ -202,17 +171,13 @@
                         <span class="text-slate-400 font-medium">Fee</span>
                         <span class="font-bold text-slate-800">₹0.00</span>
                     </div>
-                    
                     <hr class="border-dashed border-gray-200 my-2">
-
                     <div class="flex justify-between items-center py-1 text-base">
                         <span class="font-bold text-slate-800">Total Amount</span>
                         <span id="receiptTotal" class="font-black text-slate-900 text-lg">₹0.00</span>
                     </div>
                 </div>
             </div>
-
-            <!-- Done Button to Dismiss -->
             <div class="mt-8">
                 <button onclick="dismissReceipt()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition-all active-scale">
                     Done
@@ -220,31 +185,24 @@
             </div>
         </div>
 
-        <!-- MOBILE STYLE BOTTOM SHEET DROPDOWN OVERLAY -->
         <div id="dropdownOverlay" onclick="closeBankDropdown()" class="hidden fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 opacity-0"></div>
         
-        <!-- Bottom Sheet Body -->
         <div id="bankDropdownMenu" class="bottom-sheet fixed md:absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-white rounded-t-[32px] shadow-2xl z-50 transform translate-y-full border-t border-gray-100 overflow-hidden">
             <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto my-3"></div>
             <div class="px-6 pb-2 flex justify-between items-center">
                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Choose Bank Account</h3>
                 <button onclick="closeBankDropdown()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
-            <div id="bankListContainer" class="max-h-64 overflow-y-auto px-4 pb-6 no-scrollbar">
-                <!-- Dynamic bank rows will mount here -->
-            </div>
+            <div id="bankListContainer" class="max-h-64 overflow-y-auto px-4 pb-6 no-scrollbar"></div>
         </div>
 
     </div>
 
-    <!-- AUDIO ELEMENT: success.mp3 -->
     <audio id="successAudio" src="https://www.image2url.com/r2/default/audio/1780748863455-197ee552-4642-42c9-9893-a97054543876.mp3" preload="auto"></audio>
 
-    <!-- CODE LOGIC -->
     <script>
         // =============================================
-        // 1. AVATAR CONFIGS
+        // AVATAR CONFIGS
         // =============================================
         const nameInput = document.getElementById('receiverName');
         const receiverUpi = document.getElementById('receiverUpi');
@@ -253,15 +211,12 @@
         const receiverCard = document.getElementById('receiverCard');
         const qrBadge = document.getElementById('qrBadge');
         const colors = ['bg-indigo-500', 'bg-emerald-500', 'bg-purple-500', 'bg-blue-500', 'bg-amber-500', 'bg-rose-500'];
-
         const upiProviders = ['@paytm', '@googlepay', '@phonepe', '@amazonpay', '@upi', '@nsdl', '@okhdfc', '@axis', '@sbi', '@icici'];
 
         function generateUPIFromName(name) {
             if (!name || name.trim() === '') return 'user@upi';
-            
             let cleanName = name.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
             let parts = cleanName.split(/\s+/);
-            
             let base = '';
             if (parts.length === 1) {
                 base = parts[0].substring(0, 6);
@@ -271,17 +226,14 @@
             } else {
                 base = parts[0].substring(0, 3) + parts[1].charAt(0) + parts[parts.length - 1].charAt(0);
             }
-            
             const randomNum = Math.floor(100 + Math.random() * 900);
             base = base + randomNum;
             const provider = upiProviders[Math.floor(Math.random() * upiProviders.length)];
-            
             return base + provider;
         }
 
         function updateAvatarAndUPI() {
             const name = nameInput.value.trim();
-            
             if (name) {
                 const words = name.split(" ");
                 let initials = words[0].charAt(0).toUpperCase();
@@ -295,7 +247,6 @@
                 avatarInitials.innerText = "??";
                 avatarBg.className = `w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold shadow-md transition-all duration-300 bg-slate-400`;
             }
-            
             const newUpi = generateUPIFromName(name);
             receiverUpi.value = newUpi;
         }
@@ -303,7 +254,7 @@
         nameInput.addEventListener('input', updateAvatarAndUPI);
 
         // =============================================
-        // 2. DATA MANAGEMENT
+        // DATA MANAGEMENT
         // =============================================
         const dropdownMenu = document.getElementById('bankDropdownMenu');
         const dropdownOverlay = document.getElementById('dropdownOverlay');
@@ -313,10 +264,8 @@
         const amountInput = document.getElementById('amountInput');
         const amountWrapper = document.getElementById('amountWrapper');
         const balanceWarning = document.getElementById('balanceWarning');
-        
         const paymentScreen = document.getElementById('paymentScreen');
         const receiptScreen = document.getElementById('receiptScreen');
-
         const receiptName = document.getElementById('receiptName');
         const receiptAccount = document.getElementById('receiptAccount');
         const receiptDateTime = document.getElementById('receiptDateTime');
@@ -354,37 +303,42 @@
         }
 
         // =============================================
-        // 3. QR SCANNED DATA HANDLER
+        // QR SCANNED DATA HANDLER
         // =============================================
         function checkForScannedData() {
             const scanData = localStorage.getItem('qrScanData');
             if (scanData) {
                 try {
                     const data = JSON.parse(scanData);
+                    console.log("Scanned Data received:", data);
                     
-                    // Show QR badge
                     qrBadge.classList.remove('hidden');
-                    
-                    // Flash animation
                     receiverCard.classList.add('qr-flash');
                     setTimeout(() => receiverCard.classList.remove('qr-flash'), 800);
                     
-                    // Update fields
-                    if (data.name && data.name.trim() !== '') {
+                    if (data.name && data.name.trim() !== '' && data.name !== 'Unknown User') {
                         nameInput.value = data.name.trim();
+                    } else {
+                        // If name is Unknown User, try to extract from UPI
+                        if (data.upi && data.upi.includes('@')) {
+                            const nameFromUpi = data.upi.split('@')[0].replace(/[0-9]/g, ' ').trim();
+                            if (nameFromUpi) {
+                                nameInput.value = nameFromUpi.split(' ').map(w => 
+                                    w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+                                ).join(' ');
+                            }
+                        }
                     }
                     
                     if (data.upi && data.upi.trim() !== '') {
                         receiverUpi.value = data.upi.trim();
                     }
                     
-                    // Update avatar
                     updateAvatarAndUPI();
                     
-                    // Show toast-like notification
-                    showNotification(`✅ QR Scanned: ${data.name || 'User'}`);
+                    // Show notification
+                    showNotification(`✅ QR Scanned: ${nameInput.value || 'User'}`);
                     
-                    // Clear the stored data after use
                     localStorage.removeItem('qrScanData');
                     
                 } catch (e) {
@@ -392,29 +346,13 @@
                     localStorage.removeItem('qrScanData');
                 }
             }
-            
-            // Check for URL parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('scanned') === 'true') {
-                // If scanned flag is set but no data, check again
-                const retryData = localStorage.getItem('qrScanData');
-                if (!retryData) {
-                    // Try to retrieve from session
-                    showNotification('📱 Please scan QR code again');
-                }
-            }
         }
 
-        // =============================================
-        // 4. NOTIFICATION HELPER
-        // =============================================
         function showNotification(message) {
-            // Create a floating notification
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-lg z-50 font-bold text-sm flex items-center gap-2 transition-all duration-500';
             notification.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${message}`;
             document.body.appendChild(notification);
-            
             setTimeout(() => {
                 notification.style.opacity = '0';
                 notification.style.transform = 'translate(-50%, -20px)';
@@ -423,7 +361,15 @@
         }
 
         // =============================================
-        // 5. NUMPAD INTERACTION & REAL-TIME VALIDATION
+        // OPEN SCANNER FROM SEND PAGE
+        // =============================================
+        function openScannerFromSend() {
+            localStorage.setItem('openScanner', 'true');
+            window.location.href = 'index.html';
+        }
+
+        // =============================================
+        // NUMPAD
         // =============================================
         function pressKey(key) {
             if (key === 'back') {
@@ -445,7 +391,6 @@
                     currentAmountString += key;
                 }
             }
-            
             amountDisplay.innerText = currentAmountString;
             amountInput.value = parseFloat(currentAmountString) || 0;
             validateLiveBalance();
@@ -463,7 +408,7 @@
         }
 
         // =============================================
-        // 6. BOTTOM SHEET ANIMATION CONTROL
+        // BANK DROPDOWN
         // =============================================
         function openBankDropdown(e) {
             e.stopPropagation();
@@ -482,7 +427,6 @@
         function renderDropdownList() {
             const savedBanks = JSON.parse(localStorage.getItem('savedUserBanks'));
             bankListContainer.innerHTML = ""; 
-
             if (savedBanks && savedBanks.length > 0) {
                 savedBanks.forEach((bank) => {
                     const isSelected = currentSelectedBank && currentSelectedBank.account === bank.account;
@@ -512,7 +456,7 @@
         }
 
         // =============================================
-        // 7. TRANSACTION TRIGGER & RECEIPT GENERATOR + SOUND
+        // PAYMENT
         // =============================================
         function handlePayment() {
             const amount = parseFloat(amountInput.value);
@@ -546,7 +490,6 @@
             activeBankRecord.balance -= amount;
             savedBanks[bankIndex] = activeBankRecord;
             localStorage.setItem('savedUserBanks', JSON.stringify(savedBanks));
-            
             currentSelectedBank = activeBankRecord;
 
             const now = new Date();
@@ -572,22 +515,15 @@
             receiptScreen.classList.remove('hidden');
         }
 
-        // =============================================
-        // 8. DISMISS RECEIPT PAGE
-        // =============================================
         function dismissReceipt() {
             currentAmountString = "0";
             amountDisplay.innerText = "0";
             amountInput.value = 0;
             validateLiveBalance();
-
             receiptScreen.classList.add('hidden');
             paymentScreen.classList.remove('hidden');
         }
 
-        // =============================================
-        // 9. TRANSACTION HISTORY LOGGER
-        // =============================================
         function logTransaction(name, upi, amount, date, ref, status, bankName) {
             let history = JSON.parse(localStorage.getItem('upi_tx_history')) || [];
             const newTx = {
@@ -602,32 +538,6 @@
             history.unshift(newTx); 
             localStorage.setItem('upi_tx_history', JSON.stringify(history));
         }
-
-        // =============================================
-        // 10. SCAN BUTTON ON SEND PAGE (Opens Scanner)
-        // =============================================
-        // Add scan button to header if needed - we already have it on index.html
-        // But we can also add a scan button here for convenience
-        document.addEventListener('DOMContentLoaded', () => {
-            // Add scan button to header
-            const header = document.querySelector('header');
-            if (header) {
-                const scanBtn = document.createElement('button');
-                scanBtn.className = 'w-10 h-10 flex items-center justify-center text-blue-600 rounded-full hover:bg-blue-50 active-scale transition-all';
-                scanBtn.innerHTML = '<i class="fa-solid fa-qrcode text-lg"></i>';
-                scanBtn.onclick = () => {
-                    // Store flag and redirect to index for scanning
-                    localStorage.setItem('openScanner', 'true');
-                    window.location.href = 'index.html';
-                };
-                // Insert after back button
-                const backBtn = header.querySelector('a');
-                if (backBtn) {
-                    backBtn.after(scanBtn);
-                }
-            }
-        });
-
     </script>
 </body>
 </html>
